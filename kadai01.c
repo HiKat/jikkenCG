@@ -16,9 +16,9 @@
 
 
 //投影する頂点の数
-#define VER_NUM 3
+#define VER_NUM 5
 //ポリゴンの三角形面の数
-#define SUR_NUM 1
+#define SUR_NUM 4
 
 
 //メモリ内に画像の描画領域を確保
@@ -36,8 +36,8 @@ double projected_ver[VER_NUM][2];
 //example
 double ver[VER_NUM][3] = {
     {0, 0, 400},
-    //{-200, 0, 500},
-    //{0, 150, 500},
+    {-200, 0, 500},
+    {0, 150, 500},
     {200, 0, 500},
     {0, -150, 500}
 };
@@ -45,11 +45,10 @@ double ver[VER_NUM][3] = {
 
 //coordIndex
 const int sur[SUR_NUM][3] = {
-    //{0, 1, 2},
-    //{0, 2, 3},
-    //{0, 3, 4},
-    {0, 1, 2}
-    //{0, 4, 1}
+    {0, 1, 2},
+    {0, 2, 3},
+    {0, 3, 4},
+    {0, 4, 1}
 };
 //diffuseColor
 double diffuse_color[3] = {1.0, 1.0, 0.0};
@@ -258,13 +257,15 @@ void shading(double *a, double *b, double *c){
                     perror("エラーat1856");
                 }
                 int i;
-                i = ceil(p[1]);
+                i = ceil(r[1]);
+
                 
                 for(i;
                     r[1] <= i && i <= p[1] && 0 <= i && i <= (HEIGHT - 1);
                     i++){       
                     double x1 = func1(p, r, i);          
-                    double x2 = func1(q, r, i);        
+                    double x2 = func1(q, r, i);
+
                     int j;
                     j = ceil(x1);
                     
