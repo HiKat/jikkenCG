@@ -1,0 +1,54 @@
+\documentclass[a4j,dvipdfmx]{jarticle}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{multirow}
+\usepackage[dvipdfmx]{color}
+\usepackage{lscape}
+\usepackage{ascmac}
+\usepackage{here}
+\usepackage{txfonts}
+\usepackage{listings, jlisting}
+\renewcommand{\lstlistingname}{リスト}
+\lstset{
+  %laguage=C 言語指定.
+  basicstyle=\ttfamily\scriptsize,
+  commentstyle=\textit,
+  classoffset=1,
+  keywordstyle=\bfseries,
+  frame=tRBl,
+  framesep=5pt,
+  showstringspaces=true,
+  numbers=left,
+  stepnumber=1,
+  numberstyle=\tiny,
+  tabsize=2
+}
+%subsubsubsectionの定義
+\makeatletter
+\newcommand{\subsubsubsection}{\@startsection{paragraph}{4}{\z@}%
+  {1.0\Cvs \@plus.5\Cdp \@minus.2\Cdp}%
+  {.1\Cvs \@plus.3\Cdp}%
+  {\reset@font\sffamily\normalsize}
+}
+\makeatother
+\setcounter{secnumdepth}{4}
+%ここまでsubsubsubsectionの定義
+
+\begin{document}
+
+\title{計算機科学実験及び演習4\\コンピュータグラフィックス\\課題1}
+\author{工学部情報学科3回生 1029255242\\勝見久央}
+\date{作成日: \today} % コンパイル時の日付が自動で挿入される
+\maketitle
+%文字コードはUTF-8推奨.それ以外ではline2のcontentsline~にエラー発生.
+%選択範囲コメントアウトは選択中にM-;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%ソースコードの貼付け
+%% \lstinputlisting[caption=キャプション,label=ラベル,breaklines=true]
+%% {./kadai01.sc}
+%%次でも可
+%% \begin{lstlisting}
+%% \end{lstlisting}
+
+
+
+\end{document}

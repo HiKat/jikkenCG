@@ -3,6 +3,10 @@
 #include <string.h>
 #include <math.h>
 
+
+
+//=====================================================================
+//必要なデータ
 #define FILENAME "test.ppm"
 #define MAGICNUM "P3"
 #define WIDTH 256
@@ -13,74 +17,75 @@
 #define MAX_STRING "255"
 #define FOCUS 256.0
 
-
-
-//投影する頂点の数
-//パターン1
-//#define VER_NUM 5
-//パターン2
-#define VER_NUM 6
-
-//ポリゴンの三角形面の数erm
-//パターン1
-//#define SUR_NUM 4
-//パターン2
-#define SUR_NUM 2
-
-
-
-//メモリ内に画像の描画領域を確保
-double image[256][256][3];
-
-//投影された後の2次元平面上の各点の座標を格納する
-double projected_ver[VER_NUM][2];
-
-
-//=====================================================================
-//ポリゴンデータ
-//av1.wrl
-//point
-
-//example
-//パターン1
-/* double ver[VER_NUM][3] = { */
+//パターン1=======================
+/* #define VER_NUM 5 */
+/* #define SUR_NUM 4 */
+/* const double ver[VER_NUM][3] = { */
 /*     {0, 0, 400}, */
 /*     {-200, 0, 500}, */
 /*     {0, 150, 500}, */
 /*     {200, 0, 500}, */
 /*     {0, -150, 500} */
 /* }; */
-
-//パターン2
-double ver[VER_NUM][3] = {
-    {-200, 0, 500},
-    {200, -100, 500},
-    {100, -200, 400},
-    {-100, -100, 500},
-    {50, 200,  400},
-    {100, 100, 500}
-};
-
-//double ver[VER_NUM][3];//ランダムな座標を格納するための領域を確保
-
-//coordIndex
-//パターン1
 /* const int sur[SUR_NUM][3] = { */
 /*     {0, 1, 2}, */
 /*     {0, 2, 3}, */
 /*     {0, 3, 4}, */
 /*     {0, 4, 1} */
 /* }; */
+//================================
 
-//パターン2
+
+//パターン2=======================
+/* #define VER_NUM 6 */
+/* #define SUR_NUM 2 */
+/* const double ver[VER_NUM][3] = { */
+/*     {-200, 0, 500}, */
+/*     {200, -100, 500}, */
+/*     {100, -200, 400}, */
+/*     {-100, -100, 500}, */
+/*     {50, 200,  400}, */
+/*     {100, 100, 500} */
+/* }; */
+/* const int sur[SUR_NUM][3] = { */
+/*     {0, 1, 2}, */
+/*     {3, 4, 5}, */
+/* }; */
+//================================
+
+
+
+//パターン3（ランダム座標）=======
+#define VER_NUM 5
+#define SUR_NUM 4
+//ランダムな座標を格納するための領域を確保
+//頂点座標はmain関数内で格納
+double ver[VER_NUM][3];
 const int sur[SUR_NUM][3] = {
     {0, 1, 2},
-    {3, 4, 5},
+    {0, 2, 3},
+    {0, 3, 4},
+    {0, 4, 1}
 };
+//================================
+
 
 //diffuseColor
-double diffuse_color[3] = {1.0, 1.0, 0.0};
+const double diffuse_color[3] = {0.0, 1.0, 0.0};
+
+//光源モデルは平行光源
+//光源方向
+const double light_dir[3] = {-1.0, -1.0, 2.0};
+//光源明るさ
+const double light_rgb[3] = {1.0, 1.0, 1.0};
 //=====================================================================
+
+
+//メモリ内に画像の描画領域を確保
+double image[256][256][3];
+
+//投影された後の2次元平面上の各点の座標を格納する領域
+double projected_ver[VER_NUM][2];
 
 
 
@@ -139,7 +144,8 @@ void perspective_pro(){
         double xp2 = xp * (zi / zp);
         double yp2 = yp * (zi / zp);
         double zp2 = zi;
-        
+
+        //座標軸を平行移動
         //projected_ver[i][0] = xp2;
         //projected_ver[i][1] = yp2;
         projected_ver[i][0] = (MAX / 2) + xp2;
@@ -148,10 +154,11 @@ void perspective_pro(){
 }
 
 //投影された三角形abcにラスタライズ、クリッピングでシェーディングを行う関数
-//引数は投影平面上の3点
+//引数a, b, cは投影平面上の3点
 //eg)
 //double a = {1.0, 2.0};
-void shading(double *a, double *b, double *c){
+//nは法線ベクトル
+void shading(double *a, double *b, double *c, double *n){
     //3点が1直線上に並んでいるときはシェーディングができない
     if(lineOrNot(a, b, c) == 1){
         //塗りつぶす点が無いので何もしない.
@@ -215,7 +222,24 @@ void shading(double *a, double *b, double *c){
             printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割できないのでこのままシェーディング\n"
                    ,p[0], p[1], q[0], q[1], r[0], r[1]);
 
+            //長さが1の光源方向ベクトルを作成する
+            //光源方向ベクトルの長さ
+            double length_l =
+                sqrt(pow(light_dir[0], 2.0) +
+                     pow(light_dir[1], 2.0) +
+                     pow(light_dir[2], 2.0));
             
+            double light_dir_vec[3];
+            light_dir_vec[0] = light_dir[0] / length_l;
+            light_dir_vec[1] = light_dir[1] / length_l;
+            light_dir_vec[2] = light_dir[2] / length_l;
+            
+            // 法線ベクトルnと光源方向ベクトルの内積
+            double ip =
+                (n[0] * light_dir_vec[0]) +
+                (n[1] * light_dir_vec[1]) +
+                (n[2] * light_dir_vec[2]);
+                            
             //2パターンの三角形を特定
             if(p[1] == r[1]){
                 //x座標が p <= r となるように調整
@@ -254,9 +278,16 @@ void shading(double *a, double *b, double *c){
                     for(j;
                         x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
                         j++){
-                        image[i][j][0] = 1.0 * MAX;
-                        image[i][j][1] = 1.0 * MAX;
-                        image[i][j][2] = 0.0 * MAX;
+                    
+                        image[i][j][0] =
+                            -1 * ip * diffuse_color[0] *
+                            light_rgb[0] * MAX;
+                        image[i][j][1] =
+                            -1 * ip * diffuse_color[1] *
+                            light_rgb[1] * MAX;
+                        image[i][j][2] =
+                            -1 * ip * diffuse_color[2] *
+                            light_rgb[2] * MAX;
                     }
                 }
                 
@@ -300,9 +331,16 @@ void shading(double *a, double *b, double *c){
                     for(j;
                         x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
                         j++){
-                        image[i][j][0] = 1.0 * MAX;
-                        image[i][j][1] = 1.0 * MAX;
-                        image[i][j][2] = 0.0 * MAX;
+
+                        image[i][j][0] =
+                            -1 * ip * diffuse_color[0] *
+                            light_rgb[0] * MAX;
+                        image[i][j][1] =
+                            -1 * ip * diffuse_color[1] *
+                            light_rgb[1] * MAX;
+                        image[i][j][2] =
+                            -1 * ip * diffuse_color[2] *
+                            light_rgb[2] * MAX;
                     }
                 }
             }
@@ -323,8 +361,9 @@ void shading(double *a, double *b, double *c){
                 memcpy(p2, p, sizeof(double) * 2);
                 memcpy(p, temp, sizeof(double) * 2); 
             }
-            shading(p, p2, q);
-            shading(p, p2, r);
+            //分割しても法線ベクトルは同一
+            shading(p, p2, q, n);
+            shading(p, p2, r, n);
         }   
     }
 }
@@ -343,12 +382,12 @@ int main(void){
     //ファイルが開けたとき
     else{
         //頂点座標をランダムに設定
-        /* srand(10); */
-        /* for(int i = 0; i < VER_NUM; i++){ */
-        /*     ver[i][0] = rand() % 256 + 1; */
-        /*     ver[i][1] = rand() % 256 + 1; */
-        /*     ver[i][2] = rand() % 256 + 1; */
-        /* } */
+        srand(10);
+        for(int i = 0; i < VER_NUM; i++){
+            ver[i][0] = rand() % 80;
+            ver[i][1] = rand() % 80;
+            ver[i][2] = rand() % 50 + 30;
+        }
 
         printf("\n初期の頂点座標は以下\n");
         for(int i = 0; i < VER_NUM; i++){
@@ -398,7 +437,64 @@ int main(void){
             //debug
             printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nのシェーディングを行います.\n"
                    ,a[0], a[1], b[0], b[1], c[0], c[1]);
-            shading(a, b, c);
+
+
+            //冗長な処理
+            //透視投影処理の際に法線ベクトル、
+            //光源からの距離を同時に求めておけばよかったが
+            //今更変更できないのでここで再び求める
+            
+            //法線ベクトルを計算
+            //投影前の3点の座標を取得
+            double A[3], B[3], C[3];
+            A[0] = ver[(sur[i][0])][0];
+            A[1] = ver[(sur[i][0])][1];
+            A[2] = ver[(sur[i][0])][2];
+            
+            B[0] = ver[(sur[i][1])][0];
+            B[1] = ver[(sur[i][1])][1];
+            B[2] = ver[(sur[i][1])][2];
+            
+            C[0] = ver[(sur[i][2])][0];
+            C[1] = ver[(sur[i][2])][1];
+            C[2] = ver[(sur[i][2])][2];
+
+            //debug
+            printf("\n3次元空間内の3点の座標は\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\nです\n",
+                   A[0], A[1], A[2],
+                   B[0], B[1], B[2],
+                   C[0], C[1], C[2]);
+            
+            //ベクトルAB, ACから外積を計算して
+            //法線ベクトルnを求める
+            double AB[3], AC[3], n[3];
+            AB[0] = B[0] - A[0];
+            AB[1] = B[1] - A[1];
+            AB[2] = B[2] - A[2];
+            
+            AC[0] = C[0] - A[0];
+            AC[1] = C[1] - A[1];
+            AC[2] = C[2] - A[2];
+
+            n[0] = (AB[1] * AC[2]) - (AB[2] * AC[1]);
+            n[1] = (AB[2] * AC[0]) - (AB[0] * AC[2]);
+            n[2] = (AB[0] * AC[1]) - (AB[1] * AC[0]);
+
+            //長さを1に調整
+            double length_n =
+                sqrt(pow(n[0], 2.0) +
+                     pow(n[1], 2.0) +
+                     pow(n[2], 2.0));
+        
+            n[0] = n[0] / length_n;
+            n[1] = n[1] / length_n;
+            n[2] = n[2] / length_n;
+            
+            printf("\n法線ベクトルは\n(%f,\t%f,\t%f)\nです\n",
+                   n[0], n[1], n[2]);
+            
+            //平面iの投影先の三角形をシェーディング
+            shading(a, b, c, n);
         }
 
         //imageの出力
