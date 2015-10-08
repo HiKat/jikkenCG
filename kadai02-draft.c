@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-
-void perspective_pro(int i);
-
+#include <float.h>
 
 
 //=====================================================================
@@ -19,24 +16,26 @@ void perspective_pro(int i);
 #define MAX 255
 #define MAX_STRING "255"
 #define FOCUS 256.0
+#define Z_BUF_MAX 
 
-
-
-
-
-//diffuseColor
-const double diffuse_color[3] = {0.0, 1.0, 0.0};
+//diffuseColorを格納する配列
+double diffuse_color[3];
 
 //光源モデルは平行光源
+
 //光源方向
 const double light_dir[3] = {-1.0, -1.0, 2.0};
 //光源明るさ
 const double light_rgb[3] = {1.0, 1.0, 1.0};
+
+//カメラ位置は原点であるものとして投影を行う.
 //=====================================================================
 
 
 //メモリ内に画像の描画領域を確保
 double image[HEIGHT][WIDTH][3];
+//zバッファ用の領域を確保
+double z_buf[HEIGHT][WIDTH];
 
 //投影された後の2次元平面上の各点の座標を格納する領域
 //double projected_ver[VER_NUM][2];
@@ -93,7 +92,9 @@ int lineOrNot(double *a, double *b, double *c){
 //eg)
 //double a = {1.0, 2.0};
 //nは法線ベクトル
-void shading(double *a, double *b, double *c, double *n){
+//Aは投影前の3点からなる三角形平面上の任意の点の座標.
+//(3点A、B、Cのうちいずれでも良いがmain関数内のAを使うものとする.)
+void shading(double *a, double *b, double *c, double *n, double *A){
     //3点が1直線上に並んでいるときはシェーディングができない
     if(lineOrNot(a, b, c) == 1){
         //塗りつぶす点が無いので何もしない.
@@ -226,16 +227,31 @@ void shading(double *a, double *b, double *c, double *n){
                     for(j;
                         x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
                         j++){
-                    
-                        image[i][j][0] =
-                            -1 * ip * diffuse_color[0] *
-                            light_rgb[0] * MAX;
-                        image[i][j][1] =
-                            -1 * ip * diffuse_color[1] *
-                            light_rgb[1] * MAX;
-                        image[i][j][2] =
-                            -1 * ip * diffuse_color[2] *
-                            light_rgb[2] * MAX;
+
+                        //描画する点の空間内のz座標. 
+                        double z =
+                            (FOCUS * (n[0]*A[0])+(n[1]*A[1])+(n[2]*A[2]))
+                            /
+                            ((n[0]*(i-(MAX/2))) + (n[1]*(j-(MAX/2))) + n[2]*FOCUS);
+
+                        //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
+                        if(z_buf[i][j] < z){}
+                        
+                        else{
+                            image[i][j][0] =
+                                -1 * ip * diffuse_color[0] *
+                                light_rgb[0] * MAX;
+                         
+                            image[i][j][1] =
+                                -1 * ip * diffuse_color[1] *
+                                light_rgb[1] * MAX;
+                            image[i][j][2] =
+                                -1 * ip * diffuse_color[2] *
+                                light_rgb[2] * MAX;
+                            
+                            //zバッファの更新
+                            z_buf[i][j] = z;
+                        }
                     }
                 }
                 
@@ -285,15 +301,30 @@ void shading(double *a, double *b, double *c, double *n){
                         x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
                         j++){
 
-                        image[i][j][0] =
-                            -1 * ip * diffuse_color[0] *
-                            light_rgb[0] * MAX;
-                        image[i][j][1] =
-                            -1 * ip * diffuse_color[1] *
-                            light_rgb[1] * MAX;
-                        image[i][j][2] =
-                            -1 * ip * diffuse_color[2] *
-                            light_rgb[2] * MAX;
+                        //描画する点の空間内のz座標. 
+                        double z =
+                            (FOCUS * (n[0]*A[0])+(n[1]*A[1])+(n[2]*A[2]))
+                            /
+                            ((n[0]*(i-(MAX/2))) + (n[1]*(j-(MAX/2))) + n[2]*FOCUS);
+                        
+                        //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
+                        if(z_buf[i][j] < z){}
+                        
+                        else{
+                            
+                            image[i][j][0] =
+                                -1 * ip * diffuse_color[0] *
+                                light_rgb[0] * MAX;
+                            image[i][j][1] =
+                                -1 * ip * diffuse_color[1] *
+                                light_rgb[1] * MAX;
+                            image[i][j][2] =
+                                -1 * ip * diffuse_color[2] *
+                                light_rgb[2] * MAX;
+
+                            //zバッファの更新
+                            z_buf[i][j] = z;
+                        }
                     }
                 }
             }
@@ -315,8 +346,8 @@ void shading(double *a, double *b, double *c, double *n){
                 memcpy(p, temp, sizeof(double) * 2);
             }
             //分割しても法線ベクトルは同一
-            shading(p, p2, q, n);
-            shading(p, p2, r, n);
+            shading(p, p2, q, n, A);
+            shading(p, p2, r, n, A);
         }
     }
 }
@@ -600,23 +631,10 @@ int main (int argc, char *argv[])
     fprintf(stderr, "ambientIntensity %f\n", surface.ambi);
     fprintf(stderr, "shininess %f\n", surface.shine);
 
-
-
-
-
-
-
     //===================================================================
     //===================================================================
     //===================================================================
     //===================================================================
-
-
-
-
-
-
-    
 
     FILE *fp_ppm;
     char *fname = FILENAME;
@@ -638,7 +656,7 @@ int main (int argc, char *argv[])
         }
         fprintf(stderr, "\n");
         
-        //描画領域を初期化=======================================
+        //描画領域を初期化
         for(int i = 0; i < 256; i++){
             for(int j = 0; j < 256; j++){
                 image[i][j][0] = 0.0 * MAX;
@@ -646,7 +664,20 @@ int main (int argc, char *argv[])
                 image[i][j][2] = 0.0 * MAX;
             }
         }
-        //=====================================================
+
+         //zバッファを初期化
+        for(int i = 0; i < 256; i++){
+            for(int j = 0; j < 256; j++){
+                z_buf[i][j] = DBL_MAX;
+            }
+        }
+
+        //diffuse_colorの格納 
+        diffuse_color[0] = surface.diff[0];
+        diffuse_color[1] = surface.diff[1];
+        diffuse_color[2] = surface.diff[2];
+
+        
 
         /* printf("\n撮像領域上の各点の座標のprojected_verの値\n"); */
         /* for(int i = 0; i < VER_NUM; i++){ */
@@ -654,7 +685,11 @@ int main (int argc, char *argv[])
         /* } */
         /* printf("\n"); */
 
+
+
+        
         //シェーディング
+        //三角形ごとのループ
         for(int i = 0; i < poly.idx_num; i++){
             //各点の透視投影処理
             for(int j = 0; j < 3; j++){ 
@@ -673,7 +708,6 @@ int main (int argc, char *argv[])
             }
             
             double a[2], b[2], c[2];
-            
             a[0] = projected_ver_buf[0][0];
             a[1] = projected_ver_buf[0][1];
             b[0] = projected_ver_buf[1][0];
@@ -690,11 +724,6 @@ int main (int argc, char *argv[])
             //透視投影処理の際に法線ベクトル、
             //光源からの距離を同時に求めておけばよかったが
             //今更変更できないのでここで再び求める
-
-
-
-
-            
             //法線ベクトルを計算
             //投影前の3点の座標を取得
             //3点の座標は
@@ -746,13 +775,16 @@ int main (int argc, char *argv[])
             n[2] = n[2] / length_n;
 
             //debug
-            printf("\n法線ベクトルは\n(%f,\t%f,\t%f)\nです\n",
-                   n[0], n[1], n[2]);
+            /* printf("\n法線ベクトルは\n(%f,\t%f,\t%f)\nです\n", */
+            /*        n[0], n[1], n[2]); */
 
             
             //平面iの投影先の三角形をシェーディング
-            shading(a, b, c, n);
+            shading(a, b, c, n, A);
         }
+
+
+        
      
         //ヘッダー出力
         fputs(MAGICNUM, fp_ppm);
@@ -763,9 +795,6 @@ int main (int argc, char *argv[])
         fputs("\n", fp_ppm);
         fputs(MAX_STRING, fp_ppm);
         fputs("\n" ,fp_ppm);
-
-
-
 
         //imageの出力
         for(int i = 0; i < 256; i++){
