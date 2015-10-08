@@ -239,7 +239,7 @@ int read_one_obj(
   return 1;
 }		 
 
-#ifdef DEBUG_SAMPLE
+//#ifdef DEBUG_SAMPLE
 int main (int argc, char *argv[])
 {
   int i;
@@ -274,4 +274,4 @@ int main (int argc, char *argv[])
   fprintf(stderr, "shininess %f\n", surface.shine);
   return 1;
 }
-#endif
+//#endif
