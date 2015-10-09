@@ -250,6 +250,10 @@ void shading(double *a, double *b, double *c, double *n){
                 (n[0] * light_dir_vec[0]) +
                 (n[1] * light_dir_vec[1]) +
                 (n[2] * light_dir_vec[2]);
+
+            if(0 <= ip){
+                ip = 0;
+            }
                             
             //2パターンの三角形を特定
             if(p[1] == r[1]){
