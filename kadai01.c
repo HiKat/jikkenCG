@@ -37,38 +37,38 @@
 
 
 //パターン2=======================
-/* #define VER_NUM 6 */
-/* #define SUR_NUM 2 */
-/* const double ver[VER_NUM][3] = { */
-/*     {-200, 0, 500}, */
-/*     {200, -100, 500}, */
-/*     {100, -200, 400}, */
-/*     {-100, -100, 500}, */
-/*     {50, 200,  400}, */
-/*     {100, 100, 500} */
-/* }; */
-/* const int sur[SUR_NUM][3] = { */
-/*     {0, 1, 2}, */
-/*     {3, 4, 5}, */
-/* }; */
+#define VER_NUM 6
+#define SUR_NUM 2
+const double ver[VER_NUM][3] = {
+    {-200, 0, 500},
+    {200, -100, 500},
+    {100, -200, 400},
+    {-100, -100, 500},
+    {50, 200,  400},
+    {100, 100, 500}
+};
+const int sur[SUR_NUM][3] = {
+    {0, 1, 2},
+    {3, 4, 5},
+};
 //================================
 
 
 
 //パターン3（ランダム座標）=======
-#define VER_NUM 5
-#define SUR_NUM 4
+/* #define VER_NUM 5 */
+/* #define SUR_NUM 4 */
 
-//ランダムな座標を格納するための領域を確保
-//頂点座標はmain関数内で格納
-double ver[VER_NUM][3];
+/* //ランダムな座標を格納するための領域を確保 */
+/* //頂点座標はmain関数内で格納 */
+/* double ver[VER_NUM][3]; */
 
-const int sur[SUR_NUM][3] = {
-    {0, 1, 2},
-    {0, 2, 3},
-    {0, 3, 4},
-    {0, 4, 1}
-};
+/* const int sur[SUR_NUM][3] = { */
+/*     {0, 1, 2}, */
+/*     {0, 2, 3}, */
+/*     {0, 3, 4}, */
+/*     {0, 4, 1} */
+/* }; */
 //================================
 
 
@@ -284,29 +284,34 @@ void shading(double *a, double *b, double *c, double *n){
                 int i;
                 i = ceil(p[1]);         
                 for(i;
-                    p[1] <= i && i <= q[1] && 0 <= i && i <= (HEIGHT - 1);
+                    p[1] <= i && i <= q[1];
                     i++){
-                    double x1 = func1(p, q, i);          
-                    double x2 = func1(r, q, i);        
-                    int j;
-                    j = ceil(x1);
-                    
-                    for(j;
-                        x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
-                        j++){
-                    
-                        image[i][j][0] =
-                            -1 * ip * diffuse_color[0] *
-                            light_rgb[0] * MAX;
-                        image[i][j][1] =
-                            -1 * ip * diffuse_color[1] *
-                            light_rgb[1] * MAX;
-                        image[i][j][2] =
-                            -1 * ip * diffuse_color[2] *
+
+                    //撮像平面からはみ出ていないかのチェック
+                    if(0 <= i && i <= (HEIGHT - 1)){
+                        double x1 = func1(p, q, i);          
+                        double x2 = func1(r, q, i);        
+                        int j;
+                        j = ceil(x1);
+                        
+                        for(j;
+                            x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
+                            j++){
+                            
+                            image[i][j][0] =
+                                -1 * ip * diffuse_color[0] *
+                                light_rgb[0] * MAX;
+                            image[i][j][1] =
+                                -1 * ip * diffuse_color[1] *
+                                light_rgb[1] * MAX;
+                            image[i][j][2] =
+                                -1 * ip * diffuse_color[2] *
                             light_rgb[2] * MAX;
+                        }
                     }
+                    //はみ出ている場合は描画しない
+                    else{}
                 }
-                
             }
             
             if(p[1] == q[1]){
@@ -341,28 +346,33 @@ void shading(double *a, double *b, double *c, double *n){
                 i = ceil(r[1]);
             
                 for(i;
-                    r[1] <= i && i <= p[1] && 0 <= i && i <= (HEIGHT - 1);
-                    i++){       
-                    double x1 = func1(p, r, i);          
-                    double x2 = func1(q, r, i);
-
-                    int j;
-                    j = ceil(x1);
-                    
-                    for(j;
-                        x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
-                        j++){
-
-                        image[i][j][0] =
-                            -1 * ip * diffuse_color[0] *
-                            light_rgb[0] * MAX;
-                        image[i][j][1] =
-                            -1 * ip * diffuse_color[1] *
-                            light_rgb[1] * MAX;
-                        image[i][j][2] =
-                            -1 * ip * diffuse_color[2] *
-                            light_rgb[2] * MAX;
+                    r[1] <= i && i <= p[1];
+                    i++){
+                    //撮像平面からはみ出ていないかのチェック
+                    if(0 <= i && i <= (HEIGHT - 1)){
+                        double x1 = func1(p, r, i);          
+                        double x2 = func1(q, r, i);
+                        
+                        int j;
+                        j = ceil(x1);
+                        
+                        for(j;
+                            x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
+                            j++){
+                            
+                            image[i][j][0] =
+                                -1 * ip * diffuse_color[0] *
+                                light_rgb[0] * MAX;
+                            image[i][j][1] =
+                                -1 * ip * diffuse_color[1] *
+                                light_rgb[1] * MAX;
+                            image[i][j][2] =
+                                -1 * ip * diffuse_color[2] *
+                                light_rgb[2] * MAX;
+                        }
                     }
+                    //はみ出ている場合は描画しない
+                    else{}
                 }
             }
             
@@ -403,13 +413,14 @@ int main(void){
   
     //ファイルが開けたとき
     else{
-        //頂点座標をランダムに設定
-        srand(10);
-        for(int i = 0; i < VER_NUM; i++){
-            ver[i][0] = rand() % 80;
-            ver[i][1] = rand() % 80;
-            ver[i][2] = rand() % 50 + 30;
-        }
+        //頂点座標をランダムに設定=================================
+        /* srand(10); */
+        /* for(int i = 0; i < VER_NUM; i++){ */
+        /*     ver[i][0] = rand() % 80; */
+        /*     ver[i][1] = rand() % 80; */
+        /*     ver[i][2] = rand() % 50 + 30; */
+        /* } */
+        //======================================================
 
         fprintf(stderr, "\n初期の頂点座標は以下\n");
         for(int i = 0; i < VER_NUM; i++){
