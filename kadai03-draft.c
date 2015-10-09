@@ -290,9 +290,9 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                //const double light_dir[3] = {-1.0, -1.0, 2.0};
                                //を用いる
                                double i_vec[3];
-                               i_vec[0] = -1 * light_dir[0];
-                               i_vec[1] = -1 * light_dir[1];
-                               i_vec[2] = -1 * light_dir[2];
+                               i_vec[0] = light_dir[0];
+                               i_vec[1] = light_dir[1];
+                               i_vec[2] = light_dir[2];
 
                                //長さを1にする
                                double length_i = sqrt(pow(i_vec[0], 2.0) + pow(i_vec[1], 2.0) + pow(i_vec[2], 2.0));
@@ -314,7 +314,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                s[2] = (s[2] / s_length);
 
                                //内積sn
-                               double sn = ((s[0] * n[0]) + (s[1] * s[1]) + (s[2] * s[2]));
+                               double sn =
+                                   ((s[0] * n[0]) + (s[1] * s[1]) + (s[2] * s[2]));
                                
                                if(sn <= 0){
                                    //debug
@@ -322,6 +323,19 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                    sn = 0;
                                    //exit(0);
                                }
+
+                               //拡散反射の計算に用いる法線ベクトルと光源方向ベクトルの内積
+                              // 法線ベクトルnと光源方向ベクトルの内積
+                               double ip =
+                                   (n[0] * i_vec[0]) +
+                                   (n[1] * i_vec[1]) +
+                                   (n[2] * i_vec[2]);
+                               
+                               if(0 <= ip){
+                                   ip = 0;
+                               } 
+                                     
+               
 
                                //======================================================================================
                                //======================================================================================
@@ -338,18 +352,18 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                
                                else{
                                    image[i][j][0] =
-                                       /* -1 * ip * diffuse_color[0] * */
-                                       /* light_rgb[0] * MAX; */
+                                       -1 * ip * diffuse_color[0] * light_rgb[0] * MAX
+                                       +
                                        pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX;
                                    
                                    image[i][j][1] =
-                                       /* -1 * ip * diffuse_color[1] * */
-                                       /* light_rgb[1] * MAX; */
+                                       -1 * ip * diffuse_color[1] * light_rgb[1] * MAX
+                                       +
                                        pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX;
                                    
                                    image[i][j][2] =
-                                       /* -1 * ip * diffuse_color[2] * */
-                                       /* light_rgb[2] * MAX; */
+                                       -1 * ip * diffuse_color[2] * light_rgb[2] * MAX
+                                       +
                                        pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX;
                                    
                                    //zバッファの更新
@@ -480,9 +494,9 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             //const double light_dir[3] = {-1.0, -1.0, 2.0};
                             //を用いる
                             double i_vec[3];
-                            i_vec[0] = -1 * light_dir[0];
-                            i_vec[1] = -1 * light_dir[1];
-                            i_vec[2] = -1 * light_dir[2];
+                            i_vec[0] = light_dir[0];
+                            i_vec[1] = light_dir[1];
+                            i_vec[2] = light_dir[2];
                             
                             //長さを1にする
                             double length_i = sqrt(pow(i_vec[0], 2.0) + pow(i_vec[1], 2.0) + pow(i_vec[2], 2.0));
@@ -512,6 +526,17 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                 sn = 0;
                                 //exit(0);
                             }
+
+                            //拡散反射
+                            // 法線ベクトルnと光源方向ベクトルの内積
+                            double ip =
+                                (n[0] * i_vec[0]) +
+                                (n[1] * i_vec[1]) +
+                                (n[2] * i_vec[2]);
+                            
+                            if(0 <= ip){
+                                ip = 0;
+                            }
                             
                             //======================================================================================
                             //======================================================================================
@@ -528,18 +553,18 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             else{
                             
                                 image[i][j][0] =
-                                    /* -1 * ip * diffuse_color[0] * */
-                                    /* light_rgb[0] * MAX; */
+                                    -1 * ip * diffuse_color[0] * light_rgb[0] * MAX
+                                    +
                                     pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX;
                                 
                                 image[i][j][1] =
-                                    /* -1 * ip * diffuse_color[1] * */
-                                    /* light_rgb[1] * MAX; */
+                                     -1 * ip * diffuse_color[1] * light_rgb[1] * MAX
+                                    +
                                     pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX;
                                 
                                 image[i][j][2] =
-                                    /* -1 * ip * diffuse_color[2] * */
-                                    /* light_rgb[2] * MAX; */
+                                    -1 * ip * diffuse_color[2] * light_rgb[2] * MAX
+                                    +
                                     pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX;
 
                                 printf("\n描画しました(%f\t%f\t%f)\n"
