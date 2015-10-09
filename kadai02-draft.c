@@ -155,16 +155,16 @@ void shading(double *a, double *b, double *c, double *n, double *A){
         }
 
         //debug
-        printf("\n3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n"
-               ,p[0], p[1], q[0], q[1], r[0], r[1]);
+        /* printf("\n3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
+        /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
         
         //分割可能な三角形かを判定
         if(p[1] == r[1] || p[1] == q[1]){
             //分割できない
 
             //debug
-            printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割できないのでこのままシェーディング\n"
-                   ,p[0], p[1], q[0], q[1], r[0], r[1]);
+            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割できないのでこのままシェーディング\n" */
+            /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
 
             
             //長さが1の光源方向ベクトルを作成する
@@ -263,15 +263,16 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                    
                                    //zバッファの更新
                                    //debug
-                                   printf("\nzバッファを更新しました.\n");
+                                   //printf("\nzバッファを更新しました.\n");
                                    z_buf[i][j] = z;
-                                   printf("\nz_buf => %f\n", z_buf[i][j]);
-                                   if(z_buf[i][j] < 398 || 505 < z_buf[i][j]){
-                                       printf("\nzバッファの値が不正です\n");
-                                       printf("\nz_buf => %f\n", z_buf[i][j]);
-                                       perror(NULL);
-                                       exit(0);
-                                   }
+                                   //debug
+                                   //printf("\nz_buf => %f\n", z_buf[i][j]);
+                                   /* if(z_buf[i][j] < 398 || 505 < z_buf[i][j]){ */
+                                   /*     printf("\nzバッファの値が不正です\n"); */
+                                   /*     printf("\nz_buf => %f\n", z_buf[i][j]); */
+                                   /*     perror(NULL); */
+                                   /*     exit(0); */
+                                   /* } */
                                }
                            }
                     }
@@ -373,15 +374,16 @@ void shading(double *a, double *b, double *c, double *n, double *A){
 
                                 //zバッファの更新
                                 //debug
-                                printf("\nzバッファを更新しました.\n");
+                                //printf("\nzバッファを更新しました.\n");
                                 z_buf[i][j] = z;
-                                printf("\nz_buf => %f\n", z_buf[i][j]);
-                                if(z_buf[i][j] < 400 || 500 < z_buf[i][j]){
-                                    printf("\nzバッファの値が不正です\n");
-                                    printf("\nz_buf => %f\n", z_buf[i][j]);
-                                    perror(NULL);
-                                    exit(0);
-                                }
+                                //debug
+                                /* printf("\nz_buf => %f\n", z_buf[i][j]); */
+                                /* if(z_buf[i][j] < 400 || 500 < z_buf[i][j]){ */
+                                /*     printf("\nzバッファの値が不正です\n"); */
+                                /*     printf("\nz_buf => %f\n", z_buf[i][j]); */
+                                /*     perror(NULL); */
+                                /*     exit(0); */
+                                /* } */
                             }
                         }
                     }
