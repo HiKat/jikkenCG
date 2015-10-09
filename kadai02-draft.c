@@ -238,14 +238,14 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                
                                //描画する点の空間内のz座標. 
                                double z =
-                                   (FOCUS * (n[0]*A[0])+(n[1]*A[1])+(n[2]*A[2]))
+                                   FOCUS * ((n[0]*A[0]) + (n[1]*A[1]) + (n[2]*A[2]))
                                    /
-                                   ((n[0]*(i-(MAX/2))) + (n[1]*(j-(MAX/2))) + n[2]*FOCUS);
+                                   ((n[0]*(j-(MAX/2))) + (n[1]*(i-(MAX/2))) + n[2]*FOCUS);
                                
                                //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                                if(z_buf[i][j] < z){
                                    //debug
-                                   printf("\n描画されないポリゴンです\n");
+                                   //printf("\n描画されない点です\n");
 
                                }
                                
@@ -262,7 +262,16 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                        light_rgb[2] * MAX;
                                    
                                    //zバッファの更新
+                                   //debug
+                                   printf("\nzバッファを更新しました.\n");
                                    z_buf[i][j] = z;
+                                   printf("\nz_buf => %f\n", z_buf[i][j]);
+                                   if(z_buf[i][j] < 398 || 505 < z_buf[i][j]){
+                                       printf("\nzバッファの値が不正です\n");
+                                       printf("\nz_buf => %f\n", z_buf[i][j]);
+                                       perror(NULL);
+                                       exit(0);
+                                   }
                                }
                            }
                     }
@@ -308,12 +317,12 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                 int i;
                 i = ceil(r[1]);
                 //debug
-                printf("\ni = %d\n", i);
-                printf("\nr[1] = %f\n", r[1]);
-                printf("\np[1] = %f\n", p[1]);
+                /* printf("\ni = %d\n", i); */
+                /* printf("\nr[1] = %f\n", r[1]); */
+                /* printf("\np[1] = %f\n", p[1]); */
                 //debug
-                printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n"
-                       ,p[0], p[1], q[0], q[1], r[0], r[1]);
+                /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n" */
+                /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
             
                 for(i;
                     r[1] <= i && i <= p[1];
@@ -329,7 +338,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                         j = ceil(x1);
                         
                         //debug
-                        printf("\nj = %d\nx1 = %f\nx2 = %f\ni = %d\n",j ,x1, x2, i);
+                        //printf("\nj = %d\nx1 = %f\nx2 = %f\ni = %d\n",j ,x1, x2, i);
                         
                         for(j;
                             x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
@@ -337,17 +346,17 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             
                             //描画する点の空間内のz座標. 
                             double z =
-                                (FOCUS * (n[0]*A[0])+(n[1]*A[1])+(n[2]*A[2]))
+                                FOCUS * ((n[0]*A[0]) + (n[1]*A[1]) + (n[2]*A[2]))
                                 /
-                                ((n[0]*(i-(MAX/2))) + (n[1]*(j-(MAX/2))) + n[2]*FOCUS);
+                                ((n[0]*(j-(MAX/2))) + (n[1]*(i-(MAX/2))) + n[2]*FOCUS);
                             
                             //debug
-                            printf("\nz = %f\n", z);
+                            //printf("\nz = %f\n", z);
                             
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                             if(z_buf[i][j] < z){
                                 //debug
-                                printf("\n描画されないポリゴンです\n");
+                                //printf("\n描画されない点です\n");
                             }
                         
                             else{
@@ -363,7 +372,16 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                     light_rgb[2] * MAX;
 
                                 //zバッファの更新
+                                //debug
+                                printf("\nzバッファを更新しました.\n");
                                 z_buf[i][j] = z;
+                                printf("\nz_buf => %f\n", z_buf[i][j]);
+                                if(z_buf[i][j] < 400 || 500 < z_buf[i][j]){
+                                    printf("\nzバッファの値が不正です\n");
+                                    printf("\nz_buf => %f\n", z_buf[i][j]);
+                                    perror(NULL);
+                                    exit(0);
+                                }
                             }
                         }
                     }
@@ -875,7 +893,15 @@ int main (int argc, char *argv[])
                 sprintf(str, "%s\t%s\t%s\n", r, g, b);
                 fputs(str, fp_ppm); 
             }
-        }      
+        }
+
+        //zバッファの出力
+         //zバッファを初期化
+        /* for(int i = 0; i < 256; i++){ */
+        /*     for(int j = 0; j < 256; j++){ */
+        /*         printf("\n%f\n", z_buf[i][j] = DBL_MAX); */
+        /*     } */
+        /* } */
     }
     fclose(fp_ppm);
     fclose(fp);
