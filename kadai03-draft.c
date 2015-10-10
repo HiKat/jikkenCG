@@ -197,7 +197,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
             //2パターンの三角形を特定
             if(p[1] == r[1]){
                 //debug
-                printf("\np[1] == r[1]\n");
+                //printf("\np[1] == r[1]\n");
                 //x座標が p <= r となるように調整
                 if(r[0] <  p[0]){
                     double temp[2];
@@ -315,11 +315,11 @@ void shading(double *a, double *b, double *c, double *n, double *A){
 
                                //内積sn
                                double sn =
-                                   ((s[0] * n[0]) + (s[1] * s[1]) + (s[2] * s[2]));
+                                   ((s[0] * n[0]) + (s[1] * n[1]) + (s[2] * n[2]));
                                
                                if(sn <= 0){
                                    //debug
-                                   printf("\ndebug at 1605\n");
+                                   //printf("\ndebug at 16052\n");
                                    sn = 0;
                                    //exit(0);
                                }
@@ -327,9 +327,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                //拡散反射の計算に用いる法線ベクトルと光源方向ベクトルの内積
                               // 法線ベクトルnと光源方向ベクトルの内積
                                double ip =
-                                   (n[0] * i_vec[0]) +
-                                   (n[1] * i_vec[1]) +
-                                   (n[2] * i_vec[2]);
+                                   (n[0] * i_vec[0]) + (n[1] * i_vec[1]) + (n[2] * i_vec[2]);
                                
                                if(0 <= ip){
                                    ip = 0;
@@ -345,26 +343,26 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                                if(z_buf[i][j] < p_or[2]){
                                    //debug
-                                   printf("\n描画されない点です at 1958\n");
-                                   printf("\np_or[2] = %f\n", p_or[2]);
+                                   //printf("\n描画されない点です at 1958\n");
+                                   //printf("\np_or[2] = %f\n", p_or[2]);
                                    //exit(0);
                                }
                                
                                else{
                                    image[i][j][0] =
-                                       -1 * ip * diffuse_color[0] * light_rgb[0] * MAX
-                                       +
-                                       pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX;
+                                       (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                                       + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                                       ;
                                    
                                    image[i][j][1] =
-                                       -1 * ip * diffuse_color[1] * light_rgb[1] * MAX
-                                       +
-                                       pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX;
+                                       (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                                       + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                                       ;
                                    
                                    image[i][j][2] =
-                                       -1 * ip * diffuse_color[2] * light_rgb[2] * MAX
-                                       +
-                                       pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX;
+                                       (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                                       + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                                       ;
                                    
                                    //zバッファの更新
                                    //debug
@@ -389,10 +387,10 @@ void shading(double *a, double *b, double *c, double *n, double *A){
             
             if(p[1] == q[1]){
                 //debug
-                printf("\np[1] == q[1]\n");
+                //printf("\np[1] == q[1]\n");
                 //debug
-                printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n"
-                       ,p[0], p[1], q[0], q[1], r[0], r[1]);
+                /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n" */
+                /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
                 //x座標が p < q となるように調整
                 if(q[0] <  p[0]){
                     double temp[2];
@@ -401,8 +399,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                     memcpy(p, temp, sizeof(double) * 2);
                     
                     //debug
-                    printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n"
-                           ,p[0], p[1], q[0], q[1], r[0], r[1]);
+                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
+                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
                     
                 }
                 
@@ -518,11 +516,16 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             s[2] = (s[2] / s_length);
                             
                             //内積sn
-                            double sn = ((s[0] * n[0]) + (s[1] * s[1]) + (s[2] * s[2]));
+                            double sn = ((s[0] * n[0]) + (s[1] * n[1]) + (s[2] * n[2]));
+
+                            //debug
+                            //printf("\nsn = %f\n", sn);
+                            //printf("\nn length %f\n", sqrt(pow(n[0], 2.0) + pow(n[1], 2.0) + pow(n[2], 2.0)));
+                            //printf("\ns length %f\n", sqrt(pow(s[0], 2.0) + pow(s[1], 2.0) + pow(s[2], 2.0)));
                             
                             if(sn <= 0){
                                 //debug
-                                printf("\ndebug at 1606\n");
+                                //printf("\ndebug at 1606\n");
                                 sn = 0;
                                 //exit(0);
                             }
@@ -536,6 +539,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             
                             if(0 <= ip){
                                 ip = 0;
+                                //printf("\ndebug at 1550\n");
+                                //exit(0);
                             }
                             
                             //======================================================================================
@@ -545,30 +550,30 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                             if(z_buf[i][j] < p_or[2]){
                                 //debug
-                                printf("\n描画されない点です at 1614\n");
-                                printf("\np_or[2] = %f\n", p_or[2]);
+                                //printf("\n描画されない点です at 1614\n");
+                                //printf("\np_or[2] = %f\n", p_or[2]);
                                 //exit(0);
                             }
                         
                             else{
                             
                                 image[i][j][0] =
-                                    -1 * ip * diffuse_color[0] * light_rgb[0] * MAX
-                                    +
-                                    pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX;
+                                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                                    ;
                                 
                                 image[i][j][1] =
-                                     -1 * ip * diffuse_color[1] * light_rgb[1] * MAX
-                                    +
-                                    pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX;
+                                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                                    ;
                                 
                                 image[i][j][2] =
-                                    -1 * ip * diffuse_color[2] * light_rgb[2] * MAX
-                                    +
-                                    pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX;
+                                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                                    ;
 
-                                printf("\n描画しました(%f\t%f\t%f)\n"
-                                       , image[i][j][0], image[i][j][1], image[i][j][2]);
+                                /* printf("\n描画しました(%f\t%f\t%f)\n" */
+                                /*        , image[i][j][0], image[i][j][1], image[i][j][2]); */
 
                                 //zバッファの更新
                                 //debug
@@ -596,8 +601,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
         //分割後の三角形はpp2qとpp2r
         else{
             //debug
-            printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割してシェーディング\n"
-                   ,p[0], p[1], q[0], q[1], r[0], r[1]);
+            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割してシェーディング\n" */
+            /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
             
             double p2[2];
 
@@ -611,13 +616,13 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                 memcpy(p, temp, sizeof(double) * 2);
             }
             //debug
-            printf("\np2[2] = (%f\t%f)\n", p2[0], p2[1]);
-            printf("\n三角形を\n");
-            printf("三角形pp2q = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n",
-                   p[0], p[1], p2[0], p2[1], q[0], q[1]);
-            printf("三角形pp2r = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n",
-                   p[0], p[1], p2[0], p2[1], r[0], r[1]);
-            printf("に分割してシェーディング\n");
+            /* printf("\np2[2] = (%f\t%f)\n", p2[0], p2[1]); */
+            /* printf("\n三角形を\n"); */
+            /* printf("三角形pp2q = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
+            /*        p[0], p[1], p2[0], p2[1], q[0], q[1]); */
+            /* printf("三角形pp2r = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
+            /*        p[0], p[1], p2[0], p2[1], r[0], r[1]); */
+            /* printf("に分割してシェーディング\n"); */
             //分割しても同一平面上なので法線ベクトルと
             //平面上の任意の点は同じものを使える.
             shading(p, p2, q, n, A);
@@ -886,18 +891,18 @@ int main (int argc, char *argv[])
     fprintf(stderr,"%d triangles are found.\n",poly.idx_num);
 
     /* i th vertex */
-    for ( i = 0 ; i < poly.vtx_num ; i++ ) {
-        fprintf(stdout,"%f %f %f # %d th vertex\n", 
-                poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2],
-                i);
-    }
+    /* for ( i = 0 ; i < poly.vtx_num ; i++ ) { */
+    /*     fprintf(stdout,"%f %f %f # %d th vertex\n",  */
+    /*             poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2], */
+    /*             i); */
+    /* } */
 
     /* i th triangle */
-    for ( i = 0 ; i < poly.idx_num ; i++ ) {
-        fprintf(stdout,"%d %d %d # %d th triangle\n", 
-                poly.idx[i*3+0], poly.idx[i*3+1], poly.idx[i*3+2],
-                i);
-    }
+    /* for ( i = 0 ; i < poly.idx_num ; i++ ) { */
+    /*     fprintf(stdout,"%d %d %d # %d th triangle\n",  */
+    /*             poly.idx[i*3+0], poly.idx[i*3+1], poly.idx[i*3+2], */
+    /*             i); */
+    /* } */
 
     /* material info */
     fprintf(stderr, "diffuseColor %f %f %f\n", surface.diff[0], surface.diff[1], surface.diff[2]);
@@ -920,15 +925,15 @@ int main (int argc, char *argv[])
         printf("%sファイルが開けません.\n", fname);
         return -1;
     }
-  
+    
     //ファイルが開けたとき
     else{
-        fprintf(stderr, "\n初期の頂点座標は以下\n");
-        for(int i = 0; i < poly.vtx_num; i++){
-            //fprintf(stderr, "%f\t%f\t%f\n", ver[i][0], ver[i][1], ver[i][2]);
-            fprintf(stderr, "%f\t%f\t%f\n", poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2]);
-        }
-        fprintf(stderr, "\n");
+        /* fprintf(stderr, "\n初期の頂点座標は以下\n"); */
+        /* for(int i = 0; i < poly.vtx_num; i++){ */
+        /*     //fprintf(stderr, "%f\t%f\t%f\n", ver[i][0], ver[i][1], ver[i][2]); */
+        /*     fprintf(stderr, "%f\t%f\t%f\n", poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2]); */
+        /* } */
+        /* fprintf(stderr, "\n"); */
         
         //描画領域を初期化
         for(int i = 0; i < 256; i++){
@@ -1005,8 +1010,8 @@ int main (int argc, char *argv[])
             c[1] = projected_ver_buf[2][1];
             
             //debug
-            printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nのシェーディングを行います.\n"
-                   ,a[0], a[1], b[0], b[1], c[0], c[1]);
+            /* printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nのシェーディングを行います.\n" */
+            /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
             
 
             //冗長な処理
