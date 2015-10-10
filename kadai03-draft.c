@@ -300,6 +300,10 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                i_vec[1] = (i_vec[1] / length_i);
                                i_vec[2] = (i_vec[2] / length_i);
 
+                               //debug
+                               /* printf("\nlength_i = %f\n", */
+                               /*        sqrt(pow(i_vec[0], 2.0) + pow(i_vec[1], 2.0) + pow(i_vec[2], 2.0))); */
+
                                //sベクトルを計算
                                double s[3];
                                s[0] = e[0] - i_vec[0];
@@ -957,7 +961,16 @@ int main (int argc, char *argv[])
         diffuse_color[2] = surface.diff[2];
 
         //shininessの格納
-        shininess = surface.shine;
+        //！！！！！！！！！！！！！注意！！！！！！！！！！！！！！！！
+        //（実験ページの追加情報を参照）
+        //各ファイルのshininessの値は
+        //av4 0.5
+        //av5 0.5
+        //iiyama1997 1.0
+        //aa053 1.0
+        //av007 0.34
+        
+        shininess = surface.shine * 128;
 
         //speculorColorの格納
         specular_color[0] = surface.spec[0];
