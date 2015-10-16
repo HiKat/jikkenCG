@@ -6,7 +6,7 @@
 
 
 //=====================================================================
-//É¬Í×¤Ê¥Ç¡¼¥¿
+//å¿…è¦ãªãƒ‡ãƒ¼ã‚¿
 #define FILENAME "image.ppm"
 #define MAGICNUM "P3"
 #define WIDTH 256
@@ -18,36 +18,36 @@
 #define FOCUS 256.0
 #define Z_BUF_MAX 
 
-//diffuseColor¤ò³ÊÇ¼¤¹¤ëÇÛÎó
+//diffuseColorã‚’æ ¼ç´ã™ã‚‹é…åˆ—
 double diffuse_color[3];
-//shiness¤ò³ÊÇ¼¤¹¤ëÊÑ¿ô
+//shinessã‚’æ ¼ç´ã™ã‚‹å¤‰æ•°
 double shininess;
-//specularColor¤ò³ÊÇ¼¤¹¤ëÊÑ¿ô
+//specularColorã‚’æ ¼ç´ã™ã‚‹å¤‰æ•°
 double specular_color[3];
 
-//¸÷¸»¥â¥Ç¥ë¤ÏÊ¿¹Ô¸÷¸»
+//å…‰æºãƒ¢ãƒ‡ãƒ«ã¯å¹³è¡Œå…‰æº
 
-//¸÷¸»Êı¸ş
+//å…‰æºæ–¹å‘
 const double light_dir[3] = {-1.0, -1.0, 2.0};
-//¸÷¸»ÌÀ¤ë¤µ
+//å…‰æºæ˜ã‚‹ã•
 const double light_rgb[3] = {1.0, 1.0, 1.0};
 
-//¥«¥á¥é°ÌÃÖ¤Ï¸¶ÅÀ¤Ç¤¢¤ë¤â¤Î¤È¤·¤ÆÅê±Æ¤ò¹Ô¤¦.
+//ã‚«ãƒ¡ãƒ©ä½ç½®ã¯åŸç‚¹ã§ã‚ã‚‹ã‚‚ã®ã¨ã—ã¦æŠ•å½±ã‚’è¡Œã†.
 
 //=====================================================================
 
 
-//¥á¥â¥êÆâ¤Ë²èÁü¤ÎÉÁ²èÎÎ°è¤ò³ÎÊİ
+//ãƒ¡ãƒ¢ãƒªå†…ã«ç”»åƒã®æç”»é ˜åŸŸã‚’ç¢ºä¿
 double image[HEIGHT][WIDTH][3];
-//z¥Ğ¥Ã¥Õ¥¡ÍÑ¤ÎÎÎ°è¤ò³ÎÊİ
+//zãƒãƒƒãƒ•ã‚¡ç”¨ã®é ˜åŸŸã‚’ç¢ºä¿
 double z_buf[HEIGHT][WIDTH];
 
-//Åê±Æ¤µ¤ì¤¿¸å¤Î2¼¡¸µÊ¿ÌÌ¾å¤Î³ÆÅÀ¤ÎºÂÉ¸¤ò³ÊÇ¼¤¹¤ëÎÎ°è
+//æŠ•å½±ã•ã‚ŒãŸå¾Œã®2æ¬¡å…ƒå¹³é¢ä¸Šã®å„ç‚¹ã®åº§æ¨™ã‚’æ ¼ç´ã™ã‚‹é ˜åŸŸ
 //double projected_ver[VER_NUM][2];
 double projected_ver_buf[3][2];
 
 
-//2ÅÀp¡¢q¤ò·ë¤ÖÄ¾Àş¾å¤ÎyºÂÉ¸¤¬y¤Ç¤¢¤ë¤è¤¦¤ÊÅÀ¤ÎxºÂÉ¸¤òÊÖ¤¹´Ø¿ô
+//2ç‚¹pã€qã‚’çµã¶ç›´ç·šä¸Šã®yåº§æ¨™ãŒyã§ã‚ã‚‹ã‚ˆã†ãªç‚¹ã®xåº§æ¨™ã‚’è¿”ã™é–¢æ•°
 //eg)
 //double p[2] = (1.0, 2.0);
 double func1(double *p, double *q, double y){
@@ -59,8 +59,8 @@ double func1(double *p, double *q, double y){
         x = ((q[0] * (y - p[1])) + (p[0] * (q[1] - y))) / (q[1] - p[1]);
     }
     if(p[1] == q[1]){
-        //²ò¤Ê¤·
-        printf("\n°ú¿ô¤¬ÉÔÀµ¤Ç¤¹.\n2ÅÀ\n(%f, %f)\n(%f, %f)\n¤ÏyºÂÉ¸¤¬Æ±¤¸¤Ç¤¹.\n"
+        //è§£ãªã—
+        printf("\nå¼•æ•°ãŒä¸æ­£ã§ã™.\n2ç‚¹\n(%f, %f)\n(%f, %f)\nã¯yåº§æ¨™ãŒåŒã˜ã§ã™.\n"
                , p[0], p[1], q[0], q[1]);
         perror(NULL);
         return -1;
@@ -70,9 +70,9 @@ double func1(double *p, double *q, double y){
     return x;
 }
 
-//3ÅÀa[2] = {x, y},,,¤¬1Ä¾Àş¾å¤Ë¤¢¤ë¤«¤É¤¦¤«¤òÈ½Äê¤¹¤ë´Ø¿ô
-//1Ä¾Àş¾å¤ËÌµ¤±¤ì¤Ğreturn 0;
-//1Ä¾Àş¾å¤Ë¤¢¤ì¤Ğreturn 1;
+//3ç‚¹a[2] = {x, y},,,ãŒ1ç›´ç·šä¸Šã«ã‚ã‚‹ã‹ã©ã†ã‹ã‚’åˆ¤å®šã™ã‚‹é–¢æ•°
+//1ç›´ç·šä¸Šã«ç„¡ã‘ã‚Œã°return 0;
+//1ç›´ç·šä¸Šã«ã‚ã‚Œã°return 1;
 int lineOrNot(double *a, double *b, double *c){
     if(a[0] == b[0]){
         if(a[0] == c[0]){
@@ -93,27 +93,27 @@ int lineOrNot(double *a, double *b, double *c){
 }
 
 
-//°ú¿ô¤Ï3ÅÀ¤ÎºÂÉ¸¤ÈRGB¤È3ÅÀ¤Î¶õ´ÖÆâ¤ÎºÂÉ¸¡¢3ÅÀ¤Ç·ÁÀ®¤µ¤ì¤ë¶õ´ÖÆâ¤ÎÊ¿ÌÌ¤ÎË¡Àş¥Ù¥¯¥È¥ë¤È¤¹¤ë
+//å¼•æ•°ã¯3ç‚¹ã®åº§æ¨™ã¨RGBã¨3ç‚¹ã®ç©ºé–“å†…ã®åº§æ¨™ã€3ç‚¹ã§å½¢æˆã•ã‚Œã‚‹ç©ºé–“å†…ã®å¹³é¢ã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã¨ã™ã‚‹
 void shading(double *a, double *b, double *c,
              double *rgb_a, double *rgb_b, double *rgb_c, 
              double *A, double *B, double *C, 
-             doubel *poly_i_n_vec){
-    //3ÅÀ¤¬1Ä¾Àş¾å¤ËÊÂ¤ó¤Ç¤¤¤ë¤È¤­¤Ï¥·¥§¡¼¥Ç¥£¥ó¥°¤¬¤Ç¤­¤Ê¤¤
+             double *poly_i_n_vec){
+    //3ç‚¹ãŒ1ç›´ç·šä¸Šã«ä¸¦ã‚“ã§ã„ã‚‹ã¨ãã¯ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãŒã§ããªã„
     if(lineOrNot(a, b, c) == 1){
-        //ÅÉ¤ê¤Ä¤Ö¤¹ÅÀ¤¬Ìµ¤¤¤Î¤Ç²¿¤â¤·¤Ê¤¤.
+        //å¡—ã‚Šã¤ã¶ã™ç‚¹ãŒç„¡ã„ã®ã§ä½•ã‚‚ã—ãªã„.
         
         //debug
-        /* printf("\n3ÅÀ\na¤ÎºÂÉ¸(%f,\t%f)\nb¤ÎºÂÉ¸(%f,\t%f)\nc¤ÎºÂÉ¸(%f,\t%f)\n¤Ï°ìÄ¾Àş¾å¤Î3ÅÀ¤Ç¤¹\n" */
+        /* printf("\n3ç‚¹\naã®åº§æ¨™(%f,\t%f)\nbã®åº§æ¨™(%f,\t%f)\ncã®åº§æ¨™(%f,\t%f)\nã¯ä¸€ç›´ç·šä¸Šã®3ç‚¹ã§ã™\n" */
         /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
         
     }
     else{
-        //yºÂÉ¸¤ÎÃÍ¤¬¿¿¤óÃæÅÀ¤òp¡¢¤½¤ÎÂ¾¤ÎÅÀ¤òq¡¢r¤È¤¹¤ë
-        //yºÂÉ¸¤ÎÂç¤­¤µ¤Ïr <= p <= q¤Î½ç
+        //yåº§æ¨™ã®å€¤ãŒçœŸã‚“ä¸­ç‚¹ã‚’pã€ãã®ä»–ã®ç‚¹ã‚’qã€rã¨ã™ã‚‹
+        //yåº§æ¨™ã®å¤§ãã•ã¯r <= p <= qã®é †
         double p[2], q[2], r[2];
-        //Ë¡Àş¥Ù¥¯¥È¥ë¤âÌ¾Á°¤òÊÑ¹¹¤¹¤ë
+        //æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã‚‚åå‰ã‚’å¤‰æ›´ã™ã‚‹
         double rgb_p[3], rgb_q[3], rgb_r[3];
-        //¶õ´ÖÆâ¤Ç¤Î¸µ¤ÎºÂÉ¸¤Ë¤Ä¤¤¤Æ¤âÌ¾Á°¤òÊÑ¹¹¤¹¤ë
+        //ç©ºé–“å†…ã§ã®å…ƒã®åº§æ¨™ã«ã¤ã„ã¦ã‚‚åå‰ã‚’å¤‰æ›´ã™ã‚‹
         double P[3], Q[3], R[3];
 
         if(b[1] <= a[1] && a[1] <= c[1]){
@@ -202,7 +202,7 @@ void shading(double *a, double *b, double *c,
 
                             }
                             else{
-                                printf("¥¨¥é¡¼at2055\n");
+                                printf("ã‚¨ãƒ©ãƒ¼at2055\n");
                                 printf("\na[1]=%f\tb[1]=%f\tc[1]=%f\n", a[1], b[1], c[1]);
                                 perror(NULL);
                             }
@@ -213,20 +213,20 @@ void shading(double *a, double *b, double *c,
         }
 
         //debug
-        /* printf("\n3ÅÀ¤ÎºÂÉ¸¤Ï\np¤ÎºÂÉ¸(%f, %f)\nq¤ÎºÂÉ¸(%f, %f)\nr¤ÎºÂÉ¸(%f, %f)\n" */
+        /* printf("\n3ç‚¹ã®åº§æ¨™ã¯\npã®åº§æ¨™(%f, %f)\nqã®åº§æ¨™(%f, %f)\nrã®åº§æ¨™(%f, %f)\n" */
         /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
         
-        //Ê¬³ä²ÄÇ½¤Ê»°³Ñ·Á¤«¤òÈ½Äê
+        //åˆ†å‰²å¯èƒ½ãªä¸‰è§’å½¢ã‹ã‚’åˆ¤å®š
         if(p[1] == r[1] || p[1] == q[1]){
-            //Ê¬³ä¤Ç¤­¤Ê¤¤
+            //åˆ†å‰²ã§ããªã„
 
             //debug
-            /* printf("\n»°³Ñ·Á\np¤ÎºÂÉ¸(%f, %f)\nq¤ÎºÂÉ¸(%f, %f)\nr¤ÎºÂÉ¸(%f, %f)\n¤ÏÊ¬³ä¤Ç¤­¤Ê¤¤¤Î¤Ç¤³¤Î¤Ş¤Ş¥·¥§¡¼¥Ç¥£¥ó¥°\n" */
+            /* printf("\nä¸‰è§’å½¢\npã®åº§æ¨™(%f, %f)\nqã®åº§æ¨™(%f, %f)\nrã®åº§æ¨™(%f, %f)\nã¯åˆ†å‰²ã§ããªã„ã®ã§ã“ã®ã¾ã¾ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°\n" */
             /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
 
             
-            //Ä¹¤µ¤¬1¤Î¸÷¸»Êı¸ş¥Ù¥¯¥È¥ë¤òºîÀ®¤¹¤ë
-            //¸÷¸»Êı¸ş¥Ù¥¯¥È¥ë¤ÎÄ¹¤µ
+            //é•·ã•ãŒ1ã®å…‰æºæ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’ä½œæˆã™ã‚‹
+            //å…‰æºæ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•
             double length_l =
                 sqrt(pow(light_dir[0], 2.0) +
                      pow(light_dir[1], 2.0) +
@@ -237,11 +237,11 @@ void shading(double *a, double *b, double *c,
             light_dir_vec[1] = light_dir[1] / length_l;
             light_dir_vec[2] = light_dir[2] / length_l;
                             
-            //2¥Ñ¥¿¡¼¥ó¤Î»°³Ñ·Á¤òÆÃÄê
+            //2ãƒ‘ã‚¿ãƒ¼ãƒ³ã®ä¸‰è§’å½¢ã‚’ç‰¹å®š
             if(p[1] == r[1]){
                 //debug
                 //printf("\np[1] == r[1]\n");
-                //xºÂÉ¸¤¬ p <= r ¤È¤Ê¤ë¤è¤¦¤ËÄ´À°
+                //xåº§æ¨™ãŒ p <= r ã¨ãªã‚‹ã‚ˆã†ã«èª¿æ•´
                 if(r[0] <  p[0]){
                     double temp[2];
                     double temp_rgb[3];
@@ -254,57 +254,57 @@ void shading(double *a, double *b, double *c,
                     memcpy(rgb_p, temp_rgb, sizeof(double) * 3);
                     
                     //debug
-                    /* printf("\n¸ò´¹¸å¤Î3ÅÀ¤ÎºÂÉ¸¤Ï\np¤ÎºÂÉ¸(%f, %f)\nq¤ÎºÂÉ¸(%f, %f)\nr¤ÎºÂÉ¸(%f, %f)\n" */
+                    /* printf("\näº¤æ›å¾Œã®3ç‚¹ã®åº§æ¨™ã¯\npã®åº§æ¨™(%f, %f)\nqã®åº§æ¨™(%f, %f)\nrã®åº§æ¨™(%f, %f)\n" */
                     /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
                     
                 }
                 
                 //debug
                 if(r[0] == p[0]){
-                  perror("¥¨¥é¡¼at958");
+                  perror("ã‚¨ãƒ©ãƒ¼at958");
                 }
                 
-                //¥·¥§¡¼¥Ç¥£¥ó¥°½èÍı
-                //¥·¥§¡¼¥Ç¥£¥ó¥°¤Îºİ¤Ë²èÌÌ¤«¤é¤Ï¤ß½Ğ¤·¤¿ÉôÊ¬¤ò¤É¤¦°·¤¦¤«
-                //°Ê²¼¤Î¼ÂÁõ¤ÏxyºÂÉ¸¤ÎÈÏ°Ï¤ò0 <= x, y <= 256¤È¤·¤Æ¼ÂÁõ¤·¤Æ¤¤¤ë
-                //»°³Ñ·Ápqr¤ò¥·¥§¡¼¥Ç¥£¥ó¥°
-                //yºÂÉ¸¤Ïp <= r
+                //ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å‡¦ç†
+                //ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã®éš›ã«ç”»é¢ã‹ã‚‰ã¯ã¿å‡ºã—ãŸéƒ¨åˆ†ã‚’ã©ã†æ‰±ã†ã‹
+                //ä»¥ä¸‹ã®å®Ÿè£…ã¯xyåº§æ¨™ã®ç¯„å›²ã‚’0 <= x, y <= 256ã¨ã—ã¦å®Ÿè£…ã—ã¦ã„ã‚‹
+                //ä¸‰è§’å½¢pqrã‚’ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°
+                //yåº§æ¨™ã¯p <= r
                 //debug
                 if(r[1] < p[1]){
-                    perror("¥¨¥é¡¼at1855");
+                    perror("ã‚¨ãƒ©ãƒ¼at1855");
                 }
 
-                //z¥Ğ¥Ã¥Õ¥¡¤ò³ÎÇ§¤·¤Ê¤¬¤é3ÅÀpqr¤Ë¤Ä¤¤¤ÆÀè¤Ë¥·¥§¡¼¥Ç¥£¥ó¥°¤Ç¿§¤ò¤Ì¤ë
-                double tmep_p0 = ceil(p[0]);
-                double temp_p1 = ceil(p[1]);             
-                if(z_buf[tmep_p1][temp_p0] < P[2]){
-                    //ÉÁ²è¤·¤Ê¤¤
+                //zãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºèªã—ãªãŒã‚‰3ç‚¹pqrã«ã¤ã„ã¦å…ˆã«ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã§è‰²ã‚’ã¬ã‚‹
+                int temp_p0 = ceil(p[0]);
+                int temp_p1 = ceil(p[1]);             
+                if(z_buf[temp_p1][temp_p0] < P[2]){
+                    //æç”»ã—ãªã„
                 }
                 else{
-                    image[tmep_p1][temp_p0][0] = rgb_p[0];
-                    image[tmep_p1][temp_p0][1] = rgb_p[1];
+                    image[temp_p1][temp_p0][0] = rgb_p[0];
+                    image[temp_p1][temp_p0][1] = rgb_p[1];
                     image[temp_p1][temp_p0][2] = rgb_p[2];
                 }
 
-                double tmep_q0 = ceil(q[0]);
-                double temp_q1 = ceil(q[1]);             
-                if(z_buf[tmep_q1][temp_q0] < Q[2]){
-                    //ÉÁ²è¤·¤Ê¤¤
+                int temp_q0 = ceil(q[0]);
+                int temp_q1 = ceil(q[1]);             
+                if(z_buf[temp_q1][temp_q0] < Q[2]){
+                    //æç”»ã—ãªã„
                 }
                 else{
-                    image[tmep_q1][temp_q0][0] = rgb_q[0];
-                    image[tmep_q1][temp_q0][1] = rgb_q[1];
+                    image[temp_q1][temp_q0][0] = rgb_q[0];
+                    image[temp_q1][temp_q0][1] = rgb_q[1];
                     image[temp_q1][temp_q0][2] = rgb_q[2];
                 }
 
-                double tmep_r0 = ceil(r[0]);
-                double temp_r1 = ceil(r[1]);             
-                if(z_buf[tmep_r1][temp_r0] < R[2]){
-                    //ÉÁ²è¤·¤Ê¤¤
+                int temp_r0 = ceil(r[0]);
+                int temp_r1 = ceil(r[1]);             
+                if(z_buf[temp_r1][temp_r0] < R[2]){
+                    //æç”»ã—ãªã„
                 }
                 else{
-                    image[tmep_r1][temp_r0][0] = rgb_r[0];
-                    image[tmep_r1][temp_r0][1] = rgb_r[1];
+                    image[temp_r1][temp_r0][0] = rgb_r[0];
+                    image[temp_r1][temp_r0][1] = rgb_r[1];
                     image[temp_r1][temp_r0][2] = rgb_r[2];
                 }
                 
@@ -315,7 +315,7 @@ void shading(double *a, double *b, double *c,
                     p[1] <= i && i <= q[1];
                     i++){
 
-                    //»£ÁüÊ¿ÌÌ¤«¤é¤Ï¤ß½Ğ¤Æ¤¤¤Ê¤¤¤«¤Î¥Á¥§¥Ã¥¯
+                    //æ’®åƒå¹³é¢ã‹ã‚‰ã¯ã¿å‡ºã¦ã„ãªã„ã‹ã®ãƒã‚§ãƒƒã‚¯
                     if(0 <= i
                        &&
                        i <= (HEIGHT - 1)){
@@ -332,8 +332,8 @@ void shading(double *a, double *b, double *c,
                                //======================================================================================
                                //======================================================================================
                                //p[1] == r[1]
-                               //ÉÁ²è¤¹¤ëÅÀ¤Î¶õ´ÖÆâ¤Ç¤ÎzºÂÉ¸¤ò·×»»
-                               //·×»»»ş¤ÎË¡Àş¥Ù¥¯¥È¥ë¤Ï
+                               //æç”»ã™ã‚‹ç‚¹ã®ç©ºé–“å†…ã§ã®zåº§æ¨™ã‚’è¨ˆç®—
+                               //è¨ˆç®—æ™‚ã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã¯
                                double p_z =
                                    FOCUS
                                    *
@@ -346,10 +346,10 @@ void shading(double *a, double *b, double *c,
                                     poly_i_n_vec[2]*FOCUS);
 
                                
-                               //z¤¬z¥Ğ¥Ã¥Õ¥¡¤Î³ºÅö¤¹¤ëÃÍ¤è¤êÂç¤­¤±¤ì¤ĞÉÁ²è¤ò¹Ô¤ï¤Ê¤¤¡Ê²¿¤â¤·¤Ê¤¤¡Ë
+                               //zãŒzãƒãƒƒãƒ•ã‚¡ã®è©²å½“ã™ã‚‹å€¤ã‚ˆã‚Šå¤§ãã‘ã‚Œã°æç”»ã‚’è¡Œã‚ãªã„ï¼ˆä½•ã‚‚ã—ãªã„ï¼‰
                                if(z_buf[i][j] < p_z){
                                    //debug
-                                   //printf("\nÉÁ²è¤µ¤ì¤Ê¤¤ÅÀ¤Ç¤¹ at 1958\n");
+                                   //printf("\næç”»ã•ã‚Œãªã„ç‚¹ã§ã™ at 1958\n");
                                    //printf("\np_or[2] = %f\n", p_or[2]);
                                    //exit(0);
                                }
@@ -394,14 +394,14 @@ void shading(double *a, double *b, double *c,
                                         ((rgb_r[2]*(q[1]-i) + rgb_q[2]*(i-r[1])) / (q[1]-r[1]))
                                         );
                                    
-                                   //z¥Ğ¥Ã¥Õ¥¡¤Î¹¹¿·
+                                   //zãƒãƒƒãƒ•ã‚¡ã®æ›´æ–°
                                    //debug
-                                   //printf("\nz¥Ğ¥Ã¥Õ¥¡¤ò¹¹¿·¤·¤Ş¤·¤¿.\n");
-                                   z_buf[i][j] = p_z[2];
+                                   //printf("\nzãƒãƒƒãƒ•ã‚¡ã‚’æ›´æ–°ã—ã¾ã—ãŸ.\n");
+                                   z_buf[i][j] = p_z;
                                    //debug
                                    //printf("\nz_buf => %f\n", z_buf[i][j]);
                                    /* if(z_buf[i][j] < 398 || 505 < z_buf[i][j]){ */
-                                   /*     printf("\nz¥Ğ¥Ã¥Õ¥¡¤ÎÃÍ¤¬ÉÔÀµ¤Ç¤¹\n"); */
+                                   /*     printf("\nzãƒãƒƒãƒ•ã‚¡ã®å€¤ãŒä¸æ­£ã§ã™\n"); */
                                    /*     printf("\nz_buf => %f\n", z_buf[i][j]); */
                                    /*     perror(NULL); */
                                    /*     exit(0); */
@@ -409,7 +409,7 @@ void shading(double *a, double *b, double *c,
                                }
                            }
                     }
-                    //¤Ï¤ß½Ğ¤Æ¤¤¤ë¾ì¹ç¤ÏÉÁ²è¤·¤Ê¤¤
+                    //ã¯ã¿å‡ºã¦ã„ã‚‹å ´åˆã¯æç”»ã—ãªã„
                     else{}
                 }
                 
@@ -419,9 +419,9 @@ void shading(double *a, double *b, double *c,
                 //debug
                 //printf("\np[1] == q[1]\n");
                 //debug
-                /* printf("\n»°³Ñ·Á\np¤ÎºÂÉ¸(%f, %f)\nq¤ÎºÂÉ¸(%f, %f)\nr¤ÎºÂÉ¸(%f, %f)\n\n" */
+                /* printf("\nä¸‰è§’å½¢\npã®åº§æ¨™(%f, %f)\nqã®åº§æ¨™(%f, %f)\nrã®åº§æ¨™(%f, %f)\n\n" */
                 /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-                //xºÂÉ¸¤¬ p < q ¤È¤Ê¤ë¤è¤¦¤ËÄ´À°
+                //xåº§æ¨™ãŒ p < q ã¨ãªã‚‹ã‚ˆã†ã«èª¿æ•´
                 if(q[0] <  p[0]){
                     double temp[2];
                     double temp_rgb[3];                   
@@ -434,56 +434,56 @@ void shading(double *a, double *b, double *c,
                     memcpy(rgb_p, temp_rgb, sizeof(double) * 3);
                     
                     //debug
-                    /* printf("\n¸ò´¹¸å¤Î3ÅÀ¤ÎºÂÉ¸¤Ï\np¤ÎºÂÉ¸(%f, %f)\nq¤ÎºÂÉ¸(%f, %f)\nr¤ÎºÂÉ¸(%f, %f)\n" */
+                    /* printf("\näº¤æ›å¾Œã®3ç‚¹ã®åº§æ¨™ã¯\npã®åº§æ¨™(%f, %f)\nqã®åº§æ¨™(%f, %f)\nrã®åº§æ¨™(%f, %f)\n" */
                     /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
                     
                 }
                 
                 //debug
                 if(q[0] == p[0]){
-                    perror("¥¨¥é¡¼at1011");
+                    perror("ã‚¨ãƒ©ãƒ¼at1011");
                 }
                 
-                //¥·¥§¡¼¥Ç¥£¥ó¥°½èÍı
-                //»°³Ñ·Ápqr¤ò¥·¥§¡¼¥Ç¥£¥ó¥°
-                //yºÂÉ¸¤Ïp <= q
+                //ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å‡¦ç†
+                //ä¸‰è§’å½¢pqrã‚’ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°
+                //yåº§æ¨™ã¯p <= q
                 
                 //debug
                 if(q[1] < p[1]){
-                    perror("¥¨¥é¡¼at1856");
+                    perror("ã‚¨ãƒ©ãƒ¼at1856");
                 }
                 
-                //z¥Ğ¥Ã¥Õ¥¡¤ò³ÎÇ§¤·¤Ê¤¬¤é3ÅÀpqr¤Ë¤Ä¤¤¤ÆÀè¤Ë¥·¥§¡¼¥Ç¥£¥ó¥°¤Ç¿§¤ò¤Ì¤ë
-                double tmep_p0 = ceil(p[0]);
-                double temp_p1 = ceil(p[1]);             
-                if(z_buf[tmep_p1][temp_p0] < P[2]){
-                    //ÉÁ²è¤·¤Ê¤¤
+                //zãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºèªã—ãªãŒã‚‰3ç‚¹pqrã«ã¤ã„ã¦å…ˆã«ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã§è‰²ã‚’ã¬ã‚‹
+                int temp_p0 = ceil(p[0]);
+                int temp_p1 = ceil(p[1]);             
+                if(z_buf[temp_p1][temp_p0] < P[2]){
+                    //æç”»ã—ãªã„
                 }
                 else{
-                    image[tmep_p1][temp_p0][0] = rgb_p[0];
-                    image[tmep_p1][temp_p0][1] = rgb_p[1];
+                    image[temp_p1][temp_p0][0] = rgb_p[0];
+                    image[temp_p1][temp_p0][1] = rgb_p[1];
                     image[temp_p1][temp_p0][2] = rgb_p[2];
                 }
 
-                double tmep_q0 = ceil(q[0]);
-                double temp_q1 = ceil(q[1]);             
-                if(z_buf[tmep_q1][temp_q0] < Q[2]){
-                    //ÉÁ²è¤·¤Ê¤¤
+                int temp_q0 = ceil(q[0]);
+                int temp_q1 = ceil(q[1]);             
+                if(z_buf[temp_q1][temp_q0] < Q[2]){
+                    //æç”»ã—ãªã„
                 }
                 else{
-                    image[tmep_q1][temp_q0][0] = rgb_q[0];
-                    image[tmep_q1][temp_q0][1] = rgb_q[1];
+                    image[temp_q1][temp_q0][0] = rgb_q[0];
+                    image[temp_q1][temp_q0][1] = rgb_q[1];
                     image[temp_q1][temp_q0][2] = rgb_q[2];
                 }
 
-                double tmep_r0 = ceil(r[0]);
-                double temp_r1 = ceil(r[1]);             
-                if(z_buf[tmep_r1][temp_r0] < R[2]){
-                    //ÉÁ²è¤·¤Ê¤¤
+                int temp_r0 = ceil(r[0]);
+                int temp_r1 = ceil(r[1]);             
+                if(z_buf[temp_r1][temp_r0] < R[2]){
+                    //æç”»ã—ãªã„
                 }
                 else{
-                    image[tmep_r1][temp_r0][0] = rgb_r[0];
-                    image[tmep_r1][temp_r0][1] = rgb_r[1];
+                    image[temp_r1][temp_r0][0] = rgb_r[0];
+                    image[temp_r1][temp_r0][1] = rgb_r[1];
                     image[temp_r1][temp_r0][2] = rgb_r[2];
                 }
                 
@@ -494,14 +494,14 @@ void shading(double *a, double *b, double *c,
                 /* printf("\nr[1] = %f\n", r[1]); */
                 /* printf("\np[1] = %f\n", p[1]); */
                 //debug
-                /* printf("\n»°³Ñ·Á\np¤ÎºÂÉ¸(%f, %f)\nq¤ÎºÂÉ¸(%f, %f)\nr¤ÎºÂÉ¸(%f, %f)\n\n" */
+                /* printf("\nä¸‰è§’å½¢\npã®åº§æ¨™(%f, %f)\nqã®åº§æ¨™(%f, %f)\nrã®åº§æ¨™(%f, %f)\n\n" */
                 /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
             
                 for(i;
                     r[1] <= i && i <= p[1];
                     i++){
 
-                    //»£ÁüÉôÊ¬¤«¤é¤Ï¤ß½Ğ¤Æ¤¤¤Ê¤¤¤«¤Î¥Á¥§¥Ã¥¯
+                    //æ’®åƒéƒ¨åˆ†ã‹ã‚‰ã¯ã¿å‡ºã¦ã„ãªã„ã‹ã®ãƒã‚§ãƒƒã‚¯
                     if( 0 <= i &&
                         i <= (HEIGHT - 1)){
                         double x1 = func1(p, r, i);
@@ -530,10 +530,10 @@ void shading(double *a, double *b, double *c,
                                  (poly_i_n_vec[1]*(i-(MAX/2))) +
                                  poly_i_n_vec[2]*FOCUS);
                             
-                            //z¤¬z¥Ğ¥Ã¥Õ¥¡¤Î³ºÅö¤¹¤ëÃÍ¤è¤êÂç¤­¤±¤ì¤ĞÉÁ²è¤ò¹Ô¤ï¤Ê¤¤¡Ê²¿¤â¤·¤Ê¤¤¡Ë
+                            //zãŒzãƒãƒƒãƒ•ã‚¡ã®è©²å½“ã™ã‚‹å€¤ã‚ˆã‚Šå¤§ãã‘ã‚Œã°æç”»ã‚’è¡Œã‚ãªã„ï¼ˆä½•ã‚‚ã—ãªã„ï¼‰
                             if(z_buf[i][j] < p_z){
                                 //debug
-                                //printf("\nÉÁ²è¤µ¤ì¤Ê¤¤ÅÀ¤Ç¤¹ at 1614\n");
+                                //printf("\næç”»ã•ã‚Œãªã„ç‚¹ã§ã™ at 1614\n");
                                 //printf("\np_or[2] = %f\n", p_or[2]);
                                 //exit(0);
                             }
@@ -578,17 +578,17 @@ void shading(double *a, double *b, double *c,
                                      ((rgb_r[2]*(q[1]-i) + rgb_q[2]*(i-r[1])) / (q[1]-r[1]))
                                      );
                                 
-                                /* printf("\nÉÁ²è¤·¤Ş¤·¤¿(%f\t%f\t%f)\n" */
+                                /* printf("\næç”»ã—ã¾ã—ãŸ(%f\t%f\t%f)\n" */
                                 /*        , image[i][j][0], image[i][j][1], image[i][j][2]); */
                                 
-                                //z¥Ğ¥Ã¥Õ¥¡¤Î¹¹¿·
+                                //zãƒãƒƒãƒ•ã‚¡ã®æ›´æ–°
                                 //debug
-                                //printf("\nz¥Ğ¥Ã¥Õ¥¡¤ò¹¹¿·¤·¤Ş¤·¤¿.\n");
+                                //printf("\nzãƒãƒƒãƒ•ã‚¡ã‚’æ›´æ–°ã—ã¾ã—ãŸ.\n");
                                 z_buf[i][j] = p_z;
                                 //debug
                                 /* printf("\nz_buf => %f\n", z_buf[i][j]); */
                                 /* if(z_buf[i][j] < 400 || 500 < z_buf[i][j]){ */
-                                /*     printf("\nz¥Ğ¥Ã¥Õ¥¡¤ÎÃÍ¤¬ÉÔÀµ¤Ç¤¹\n"); */
+                                /*     printf("\nzãƒãƒƒãƒ•ã‚¡ã®å€¤ãŒä¸æ­£ã§ã™\n"); */
                                 /*     printf("\nz_buf => %f\n", z_buf[i][j]); */
                                 /*     perror(NULL); */
                                 /*     exit(0); */
@@ -596,18 +596,18 @@ void shading(double *a, double *b, double *c,
                             }
                         }
                     }
-                    //»£ÁüÊ¿ÌÌ¤«¤é¤Ï¤ß½Ğ¤ëÉôÊ¬¤ÏÉÁ²è¤·¤Ê¤¤
+                    //æ’®åƒå¹³é¢ã‹ã‚‰ã¯ã¿å‡ºã‚‹éƒ¨åˆ†ã¯æç”»ã—ãªã„
                     else{}      
                 }
             }
             
         }
-        //Ê¬³ä¤Ç¤­¤ë
-        //Ê¬³ä¤·¤Æ¤½¤ì¤¾¤ìºÆµ¢Åª¤Ë½èÍı
-        //Ê¬³ä¸å¤Î»°³Ñ·Á¤Ïpp2q¤Èpp2r
+        //åˆ†å‰²ã§ãã‚‹
+        //åˆ†å‰²ã—ã¦ãã‚Œãã‚Œå†å¸°çš„ã«å‡¦ç†
+        //åˆ†å‰²å¾Œã®ä¸‰è§’å½¢ã¯pp2qã¨pp2r
         else{
             //debug
-            /* printf("\n»°³Ñ·Á\np¤ÎºÂÉ¸(%f, %f)\nq¤ÎºÂÉ¸(%f, %f)\nr¤ÎºÂÉ¸(%f, %f)\n¤ÏÊ¬³ä¤·¤Æ¥·¥§¡¼¥Ç¥£¥ó¥°\n" */
+            /* printf("\nä¸‰è§’å½¢\npã®åº§æ¨™(%f, %f)\nqã®åº§æ¨™(%f, %f)\nrã®åº§æ¨™(%f, %f)\nã¯åˆ†å‰²ã—ã¦ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°\n" */
             /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
             
             double p2[2];
@@ -651,7 +651,7 @@ void shading(double *a, double *b, double *c,
             
 
             double rgb_p2[3];
-            for(int i; i < 3; i++){
+            for(int i = 0; i < 3; i++){
                 rgb_p2[i]
                     =
                     rgb_q[i] * ((p[1]-r[1])/(q[1]-r[1]))
@@ -661,7 +661,7 @@ void shading(double *a, double *b, double *c,
                 
             
             
-            //p2¤Î¤Û¤¦¤¬p¤ÎxºÂÉ¸¤è¤êÂç¤­¤¯¤Ê¤ë¤è¤¦¤Ë¤¹¤ë
+            //p2ã®ã»ã†ãŒpã®xåº§æ¨™ã‚ˆã‚Šå¤§ãããªã‚‹ã‚ˆã†ã«ã™ã‚‹
             if(p2[0] < p[0]){
                 double temp[2];
                 double temp_rgb[3];
@@ -670,24 +670,24 @@ void shading(double *a, double *b, double *c,
                 memcpy(p2, p, sizeof(double) * 2);
                 memcpy(p, temp, sizeof(double) * 2);
 
-                memcpy(temp_rgb_, rgb_p2, sizeof(double) * 2);
+                memcpy(temp_rgb, rgb_p2, sizeof(double) * 2);
                 memcpy(rgb_p2, rgb_p, sizeof(double) * 2);
                 memcpy(rgb_p, temp_rgb, sizeof(double) * 2);
             }
             //debug
             /* printf("\np2[2] = (%f\t%f)\n", p2[0], p2[1]); */
-            /* printf("\n»°³Ñ·Á¤ò\n"); */
-            /* printf("»°³Ñ·Ápp2q = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
+            /* printf("\nä¸‰è§’å½¢ã‚’\n"); */
+            /* printf("ä¸‰è§’å½¢pp2q = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
             /*        p[0], p[1], p2[0], p2[1], q[0], q[1]); */
-            /* printf("»°³Ñ·Ápp2r = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
+            /* printf("ä¸‰è§’å½¢pp2r = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
             /*        p[0], p[1], p2[0], p2[1], r[0], r[1]); */
-            /* printf("¤ËÊ¬³ä¤·¤Æ¥·¥§¡¼¥Ç¥£¥ó¥°\n"); */
-            //Ê¬³ä¤·¤Æ¤âÆ±°ìÊ¿ÌÌ¾å¤Ê¤Î¤ÇË¡Àş¥Ù¥¯¥È¥ë¤È
-            //Ê¿ÌÌ¾å¤ÎÇ¤°Õ¤ÎÅÀ¤ÏÆ±¤¸¤â¤Î¤ò»È¤¨¤ë.
+            /* printf("ã«åˆ†å‰²ã—ã¦ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°\n"); */
+            //åˆ†å‰²ã—ã¦ã‚‚åŒä¸€å¹³é¢ä¸Šãªã®ã§æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã¨
+            //å¹³é¢ä¸Šã®ä»»æ„ã®ç‚¹ã¯åŒã˜ã‚‚ã®ã‚’ä½¿ãˆã‚‹.
 
             //shading(a, b, c, rgb_a, rgb_b, rgb_c, A, B, C, poly_i_n_vec);
 
-            //µá¤á¤ëÉ¬Í×¤¬¤¢¤ë¤Î¤Ïrgb_p2¤ÈP2
+            //æ±‚ã‚ã‚‹å¿…è¦ãŒã‚ã‚‹ã®ã¯rgb_p2ã¨P2
             
             shading(p, p2, q, rgb_p, rgb_p2, rgb_q, P, P2, Q, poly_i_n_vec);
             shading(p, p2, r, rgb_p, rgb_p2, rgb_r, P, P2, R, poly_i_n_vec);
@@ -984,22 +984,22 @@ int main (int argc, char *argv[])
 
     
     fp_ppm = fopen( fname, "w" );
-    //¥Õ¥¡¥¤¥ë¤¬³«¤±¤Ê¤«¤Ã¤¿¤È¤­
+    //ãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‘ãªã‹ã£ãŸã¨ã
     if( fp_ppm == NULL ){
-        printf("%s¥Õ¥¡¥¤¥ë¤¬³«¤±¤Ş¤»¤ó.\n", fname);
+        printf("%sãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‘ã¾ã›ã‚“.\n", fname);
         return -1;
     }
     
-    //¥Õ¥¡¥¤¥ë¤¬³«¤±¤¿¤È¤­
+    //ãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‘ãŸã¨ã
     else{
-        /* fprintf(stderr, "\n½é´ü¤ÎÄºÅÀºÂÉ¸¤Ï°Ê²¼\n"); */
+        /* fprintf(stderr, "\nåˆæœŸã®é ‚ç‚¹åº§æ¨™ã¯ä»¥ä¸‹\n"); */
         /* for(int i = 0; i < poly.vtx_num; i++){ */
         /*     //fprintf(stderr, "%f\t%f\t%f\n", ver[i][0], ver[i][1], ver[i][2]); */
         /*     fprintf(stderr, "%f\t%f\t%f\n", poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2]); */
         /* } */
         /* fprintf(stderr, "\n"); */
         
-        //ÉÁ²èÎÎ°è¤ò½é´ü²½
+        //æç”»é ˜åŸŸã‚’åˆæœŸåŒ–
         for(int i = 0; i < 256; i++){
             for(int j = 0; j < 256; j++){
                 image[i][j][0] = 0.0 * MAX;
@@ -1008,22 +1008,22 @@ int main (int argc, char *argv[])
             }
         }
 
-         //z¥Ğ¥Ã¥Õ¥¡¤ò½é´ü²½
+         //zãƒãƒƒãƒ•ã‚¡ã‚’åˆæœŸåŒ–
         for(int i = 0; i < 256; i++){
             for(int j = 0; j < 256; j++){
                 z_buf[i][j] = DBL_MAX;
             }
         }
 
-        //diffuse_color¤Î³ÊÇ¼ 
+        //diffuse_colorã®æ ¼ç´ 
         diffuse_color[0] = surface.diff[0];
         diffuse_color[1] = surface.diff[1];
         diffuse_color[2] = surface.diff[2];
 
-        //shininess¤Î³ÊÇ¼
-        //¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ªÃí°Õ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª
-        //¡Ê¼Â¸³¥Ú¡¼¥¸¤ÎÄÉ²Ã¾ğÊó¤ò»²¾È¡Ë
-        //³Æ¥Õ¥¡¥¤¥ë¤Îshininess¤ÎÃÍ¤Ï
+        //shininessã®æ ¼ç´
+        //ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼æ³¨æ„ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
+        //ï¼ˆå®Ÿé¨“ãƒšãƒ¼ã‚¸ã®è¿½åŠ æƒ…å ±ã‚’å‚ç…§ï¼‰
+        //å„ãƒ•ã‚¡ã‚¤ãƒ«ã®shininessã®å€¤ã¯
         //av4 0.5
         //av5 0.5
         //iiyama1997 1.0
@@ -1032,17 +1032,17 @@ int main (int argc, char *argv[])
         
         shininess = surface.shine * 128;
 
-        //speculorColor¤Î³ÊÇ¼
+        //speculorColorã®æ ¼ç´
         specular_color[0] = surface.spec[0];
         specular_color[1] = surface.spec[1];
         specular_color[2] = surface.spec[2];
 
-        //³ÆÄºÅÀ¤ÎË¡Àş¥Ù¥¯¥È¥ë¤òµá¤á¤ë
-        //»°³Ñ·Ái¤ÎË¡Àş¥Ù¥¯¥È¥ë¤òµá¤á¤ÆÇÛÎó¤Ë³ÊÇ¼¤¹¤ë¡Ê¥°¥í¡¼¥Ğ¥ëÎÎ°è¤ËÊİÂ¸¡Ë
-        poly_n[poly.idx_num * 3];
+        //å„é ‚ç‚¹ã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
+        //ä¸‰è§’å½¢iã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã¦é…åˆ—ã«æ ¼ç´ã™ã‚‹ï¼ˆã‚°ãƒ­ãƒ¼ãƒãƒ«é ˜åŸŸã«ä¿å­˜ï¼‰
+        double poly_n[poly.idx_num * 3];
         
-        //»°³Ñ·Ái¤Ï3ÅÀA¡¢B¡¢C¤«¤é¤Ê¤ë
-        //¤³¤Î3ÅÀ¤Ç·ÁÀ®¤µ¤ì¤ë»°³Ñ·Á¤ÎË¡Àş¥Ù¥¯¥È¥ë¤òµá¤á¤Æpoly_n¤Ë³ÊÇ¼¤·¤Æ¤¤¤¯
+        //ä¸‰è§’å½¢iã¯3ç‚¹Aã€Bã€Cã‹ã‚‰ãªã‚‹
+        //ã“ã®3ç‚¹ã§å½¢æˆã•ã‚Œã‚‹ä¸‰è§’å½¢ã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã¦poly_nã«æ ¼ç´ã—ã¦ã„ã
         for(int i = 0; i < poly.idx_num; i++){
             double A[3], B[3], C[3];
             A[0] = poly.vtx[(poly.idx[i*3+0])*3 + 0];
@@ -1058,13 +1058,13 @@ int main (int argc, char *argv[])
             C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2];
 
             //debug
-            /* printf("\n3¼¡¸µ¶õ´ÖÆâ¤Î3ÅÀ¤ÎºÂÉ¸¤Ï\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n¤Ç¤¹\n", */
+            /* printf("\n3æ¬¡å…ƒç©ºé–“å†…ã®3ç‚¹ã®åº§æ¨™ã¯\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\nã§ã™\n", */
             /*        A[0], A[1], A[2], */
             /*        B[0], B[1], B[2], */
             /*        C[0], C[1], C[2]); */
             
-            //¥Ù¥¯¥È¥ëAB, AC¤«¤é³°ÀÑ¤ò·×»»¤·¤Æ
-            //Ë¡Àş¥Ù¥¯¥È¥ën¤òµá¤á¤ë
+            //ãƒ™ã‚¯ãƒˆãƒ«AB, ACã‹ã‚‰å¤–ç©ã‚’è¨ˆç®—ã—ã¦
+            //æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«nã‚’æ±‚ã‚ã‚‹
             double AB[3], AC[3], n[3];
             AB[0] = B[0] - A[0];
             AB[1] = B[1] - A[1];
@@ -1074,12 +1074,11 @@ int main (int argc, char *argv[])
             AC[1] = C[1] - A[1];
             AC[2] = C[2] - A[2];
             
-            double n[3];
             n[0] = (AB[1] * AC[2]) - (AB[2] * AC[1]);
             n[1] = (AB[2] * AC[0]) - (AB[0] * AC[2]);
             n[2] = (AB[0] * AC[1]) - (AB[1] * AC[0]);
 
-            //Ä¹¤µ¤ò1¤ËÄ´À°
+            //é•·ã•ã‚’1ã«èª¿æ•´
             double length_n =
                 sqrt(pow(n[0], 2.0) +
                      pow(n[1], 2.0) +
@@ -1093,12 +1092,12 @@ int main (int argc, char *argv[])
             poly_n[i*3 + 1] = n[1];
             poly_n[i*3 + 2] = n[2];
         }
-        //»°³Ñ·Ái¤ÎË¡Àş¥Ù¥¯¥È¥ë¤¬poly_n¤Ë³ÊÇ¼¤µ¤ì¤¿.
+        //ä¸‰è§’å½¢iã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ãŒpoly_nã«æ ¼ç´ã•ã‚ŒãŸ.
 
-        //¥·¥§¡¼¥Ç¥£¥ó¥°
-        //»°³Ñ·Á¤´¤È¤Î¥ë¡¼¥×
+        //ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°
+        //ä¸‰è§’å½¢ã”ã¨ã®ãƒ«ãƒ¼ãƒ—
         for(int i = 0; i < poly.idx_num; i++){
-            //³ÆÅÀ¤ÎÆ©»ëÅê±Æ½èÍı
+            //å„ç‚¹ã®é€è¦–æŠ•å½±å‡¦ç†
             for(int j = 0; j < 3; j++){ 
                 double xp = poly.vtx[(poly.idx[i*3+j])*3 + 0];
                 double yp = poly.vtx[(poly.idx[i*3+j])*3 + 1];
@@ -1111,7 +1110,7 @@ int main (int argc, char *argv[])
                 //debug 
                 if(zp == 0){
                     printf("\n(%f\t%f\t%f) i=%d, j=%d\n", xp, yp, zp, i, j);
-                    perror("\n¥¨¥é¡¼0934\n");
+                    perror("\nã‚¨ãƒ©ãƒ¼0934\n");
                     //break;
                 }
                 
@@ -1119,7 +1118,7 @@ int main (int argc, char *argv[])
                 double yp2 = yp * (zi / zp);
                 double zp2 = zi;
                 
-                //ºÂÉ¸¼´¤òÊ¿¹Ô°ÜÆ°
+                //åº§æ¨™è»¸ã‚’å¹³è¡Œç§»å‹•
                 projected_ver_buf[j][0] = (MAX / 2) + xp2;
                 projected_ver_buf[j][1] = (MAX / 2) + yp2;
             }
@@ -1133,15 +1132,15 @@ int main (int argc, char *argv[])
             c[1] = projected_ver_buf[2][1];
             
             //debug
-            /* printf("\n3ÅÀ\na¤ÎºÂÉ¸(%f,\t%f)\nb¤ÎºÂÉ¸(%f,\t%f)\nc¤ÎºÂÉ¸(%f,\t%f)\n¤Î¥·¥§¡¼¥Ç¥£¥ó¥°¤ò¹Ô¤¤¤Ş¤¹.\n" */
+            /* printf("\n3ç‚¹\naã®åº§æ¨™(%f,\t%f)\nbã®åº§æ¨™(%f,\t%f)\ncã®åº§æ¨™(%f,\t%f)\nã®ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã‚’è¡Œã„ã¾ã™.\n" */
             /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
 
-            //3ÅÀabc¡ÊÅê±Æ¸å¤Î»°³Ñ·Ái¡Ë¤Î³ÆÄºÅÀ¤ÎË¡Àş¥Ù¥¯¥È¥ë¤ò¤½¤ì¤¾¤ì·×»»¤·¤Æ´Ø¿ôshading¤Ë°ú¤­ÅÏ¤¹
-            //a¡¢b¡¢c¤ÎÄºÅÀÈÖ¹æ¤Ïpoly.idx[i*3+j] (j = 1, 2, 3)
+            //3ç‚¹abcï¼ˆæŠ•å½±å¾Œã®ä¸‰è§’å½¢iï¼‰ã®å„é ‚ç‚¹ã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã‚’ãã‚Œãã‚Œè¨ˆç®—ã—ã¦é–¢æ•°shadingã«å¼•ãæ¸¡ã™
+            //aã€bã€cã®é ‚ç‚¹ç•ªå·ã¯poly.idx[i*3+j] (j = 1, 2, 3)
             double na[3], nb[3], nc[3];
             double sum_vec[3] = {0, 0, 0};
             int count = 0;
-            for(int l = 0; l < 3; l+){
+            for(int l = 0; l < 3; l++){
                 for(int k = 0; k < poly.idx_num; k++){
                     if(poly.idx[k*3+0] == poly.idx[i*3+0] ||
                        poly.idx[k*3+1] == poly.idx[i*3+0] ||
@@ -1154,42 +1153,42 @@ int main (int argc, char *argv[])
                     else{}
                 }
                 switch(l){
-                case 0;
+                case 0:
                 na[0] = sum_vec[0] / count;
                 na[1] = sum_vec[1] / count;
                 na[2] = sum_vec[2] / count;
                 break;
 
-                case 1;
+                case 1:
                 nb[0] = sum_vec[0] / count;
                 nb[1] = sum_vec[1] / count;
                 nb[2] = sum_vec[2] / count;
                 break;
 
-                case 2;
+                case 2:
                 nc[0] = sum_vec[0] / count;
                 nc[1] = sum_vec[1] / count;
                 nc[2] = sum_vec[2] / count;
                 break;
 
-                default;
-                printf("\n¥¨¥é¡¼1026\n");
+                default:
+                printf("\nã‚¨ãƒ©ãƒ¼1026\n");
                 perror(NULL);
                 exit(0);
                 break;
                 }
             }
 
-            //¤³¤³¤Ç3ÅÀabc¤Îµ±ÅÙÃÍ¤òµá¤á¤Æ¤ª¤¯É¬Í×¤¬¤¢¤ë
+            //ã“ã“ã§3ç‚¹abcã®è¼åº¦å€¤ã‚’æ±‚ã‚ã¦ãŠãå¿…è¦ãŒã‚ã‚‹
             double rgb_a[3], rgb_b[3], rgb_c[3];
-            //³ÆÅÀ¤Ë¤Ä¤¤¤Æe,i¥Ù¥¯¥È¥ë¤òµá¤á¤ë
-            //i¥Ù¥¯¥È¥ë¤Ï
+            //å„ç‚¹ã«ã¤ã„ã¦e,iãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
+            //iãƒ™ã‚¯ãƒˆãƒ«ã¯
             double i_vec[3];
             i_vec[0] = light_dir[0];
             i_vec[1] = light_dir[1];
             i_vec[2] = light_dir[2];
             
-            //Ä¹¤µ¤ò1¤Ë¤¹¤ë
+            //é•·ã•ã‚’1ã«ã™ã‚‹
             double length_i =
                 sqrt(pow(i_vec[0], 2.0) + pow(i_vec[1], 2.0) + pow(i_vec[2], 2.0));
             i_vec[0] = (i_vec[0] / length_i);
@@ -1197,11 +1196,11 @@ int main (int argc, char *argv[])
             i_vec[2] = (i_vec[2] / length_i);
 
 
-            //e¥Ù¥¯¥È¥ë¤Ï
-            //³ÆÅÀ¶õ´ÖÆâ¤Ç¤ÎºÂÉ¸¤Ï
+            //eãƒ™ã‚¯ãƒˆãƒ«ã¯
+            //å„ç‚¹ç©ºé–“å†…ã§ã®åº§æ¨™ã¯
             for(int abc = 0; abc < 3; abc++){
                 double ABC[3];
-                //¤Ê¤ª
+                //ãªãŠ
                 /* A[0] = poly.vtx[(poly.idx[i*3+0])*3 + 0]; */
                 /* A[1] = poly.vtx[(poly.idx[i*3+0])*3 + 1]; */
                 /* A[2] = poly.vtx[(poly.idx[i*3+0])*3 + 2]; */
@@ -1223,27 +1222,51 @@ int main (int argc, char *argv[])
                 e[1] = -1 * ABC[1];
                 e[2] = -1 * ABC[2];
             
-                //Ä¹¤µ¤ò1¤Ë¤¹¤ë
+                //é•·ã•ã‚’1ã«ã™ã‚‹
                 double length_e =
                     sqrt(pow(e[0], 2.0) + pow(e[1], 2.0) + pow(e[2], 2.0));
                 e[0] = (e[0] / length_e);
                 e[1] = (e[1] / length_e);
                 e[2] = (e[2] / length_e);
                 
-                //s¥Ù¥¯¥È¥ë¤Ï
+                //sãƒ™ã‚¯ãƒˆãƒ«ã¯
                 double s[3];
                 s[0] = e[0] - i_vec[0];
                 s[1] = e[1] - i_vec[1];
                 s[2] = e[2] - i_vec[2];
                             
-                //Ä¹¤µ¤ò1¤Ë¤¹¤ë
+                //é•·ã•ã‚’1ã«ã™ã‚‹
                 double s_length =
                     sqrt(pow(s[0], 2.0) + pow(s[1], 2.0) + pow(s[2], 2.0));
                 s[0] = (s[0] / s_length);
                 s[1] = (s[1] / s_length);
                 s[2] = (s[2] / s_length);
-                
-                //ÆâÀÑsn
+
+                //æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«nã‚’æ±‚ã‚ã‚‹
+                double n[3];
+                switch(abc){
+                case 0:
+                    n[0] = na[0];
+                    n[1] = na[1];
+                    n[2] = na[2];
+                    break;
+                case 1:
+                    n[0] = na[0];
+                    n[1] = na[1];
+                    n[2] = na[2];
+                    break;
+                case 2:
+                    n[0] = na[0];
+                    n[1] = na[1];
+                    n[2] = na[2];
+                    break;
+                default:
+                    printf("\nã‚¨ãƒ©ãƒ¼1546\n");
+                    perror(NULL);
+                    exit(0);
+                    break;
+                }
+                //å†…ç©sn
                 double sn
                     = ((s[0] * n[0]) + (s[1] * n[1]) + (s[2] * n[2]));
                 if(sn <= 0){
@@ -1252,8 +1275,8 @@ int main (int argc, char *argv[])
                     sn = 0;
                     //exit(0);
                 }
-                //³È»¶È¿¼Í
-                // Ë¡Àş¥Ù¥¯¥È¥ën¤È¸÷¸»Êı¸ş¥Ù¥¯¥È¥ë¤ÎÆâÀÑ
+                //æ‹¡æ•£åå°„
+                // æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«nã¨å…‰æºæ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©
                 double ip =
                     (n[0] * i_vec[0]) +
                     (n[1] * i_vec[1]) +
@@ -1264,8 +1287,8 @@ int main (int argc, char *argv[])
                     //printf("\ndebug at 1550\n");
                     //exit(0);
                 }
-                switch (abc){
-                case 0;
+                switch(abc){
+                case 0:
                 rgb_a[0] =
                     (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
                     + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
@@ -1282,7 +1305,7 @@ int main (int argc, char *argv[])
                     ;
                 break;
 
-                case 1;
+                case 1:
                 rgb_b[0] =
                     (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
                     + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
@@ -1299,7 +1322,7 @@ int main (int argc, char *argv[])
                     ;
                 break;
 
-                case 2;
+                case 2:
                 rgb_c[0] =
                     (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
                     + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
@@ -1316,16 +1339,16 @@ int main (int argc, char *argv[])
                     ;
                 break;
 
-                default;
-                printf("\n¥¨¥é¡¼1136\n");
+                default:
+                printf("\nã‚¨ãƒ©ãƒ¼1136\n");
                 perror(NULL);
                 exit(0);
                 break;
                 }
             }
             
-            //´Ø¿ôshading¤ÎÃæ¤Ç¤Ï3ÅÀ¤Î¶õ´ÖÆâ¤Ç¤ÎºÂÉ¸¤âÉ¬Í×
-           
+            //é–¢æ•°shadingã®ä¸­ã§ã¯3ç‚¹ã®ç©ºé–“å†…ã§ã®åº§æ¨™ã‚‚å¿…è¦
+            double A[3], B[3], C[3];
             A[0] = poly.vtx[(poly.idx[i*3+0])*3 + 0];
             A[1] = poly.vtx[(poly.idx[i*3+0])*3 + 1];
             A[2] = poly.vtx[(poly.idx[i*3+0])*3 + 2];
@@ -1337,9 +1360,9 @@ int main (int argc, char *argv[])
             C[0] = poly.vtx[(poly.idx[i*3+2])*3 + 0];
             C[1] = poly.vtx[(poly.idx[i*3+2])*3 + 1];
             C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2];
-            //»°³Ñ·Ái¤Î¥·¥§¡¼¥Ç¥£¥ó¥°¤ò¹Ô¤¦
+            //ä¸‰è§’å½¢iã®ã‚·ã‚§ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã‚’è¡Œã†
             
-            //»°³Ñ·Ái¤ÎË¡Àş¥Ù¥¯¥È¥ë¤Ï
+            //ä¸‰è§’å½¢iã®æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã¯
             //(poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2])
             double poly_i_n_vec[3]
                 = {poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2]};
@@ -1350,7 +1373,7 @@ int main (int argc, char *argv[])
 
         
      
-        //¥Ø¥Ã¥À¡¼½ĞÎÏ
+        //ãƒ˜ãƒƒãƒ€ãƒ¼å‡ºåŠ›
         fputs(MAGICNUM, fp_ppm);
         fputs("\n", fp_ppm);
         fputs(WIDTH_STRING, fp_ppm);
@@ -1360,7 +1383,7 @@ int main (int argc, char *argv[])
         fputs(MAX_STRING, fp_ppm);
         fputs("\n" ,fp_ppm);
 
-        //image¤Î½ĞÎÏ
+        //imageã®å‡ºåŠ›
         for(int i = 0; i < 256; i++){
             for(int j = 0; j < 256; j++){
                 char r[256];
@@ -1378,7 +1401,7 @@ int main (int argc, char *argv[])
     fclose(fp_ppm);
     fclose(fp);
     
-    printf("\nppm¥Õ¥¡¥¤¥ë %s ¤ÎºîÀ®¤¬´°Î»¤·¤Ş¤·¤¿.\n", fname );
+    printf("\nppmãƒ•ã‚¡ã‚¤ãƒ« %s ã®ä½œæˆãŒå®Œäº†ã—ã¾ã—ãŸ.\n", fname );
     return 1;
 }
 
