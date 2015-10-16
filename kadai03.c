@@ -894,19 +894,19 @@ int main (int argc, char *argv[])
     fprintf(stderr,"%d vertice are found.\n",poly.vtx_num);
     fprintf(stderr,"%d triangles are found.\n",poly.idx_num);
 
-    /* i th vertex */
-    /* for ( i = 0 ; i < poly.vtx_num ; i++ ) { */
-    /*     fprintf(stdout,"%f %f %f # %d th vertex\n",  */
-    /*             poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2], */
-    /*             i); */
-    /* } */
+    //i th vertex
+    for ( i = 0 ; i < poly.vtx_num ; i++ ) {
+        fprintf(stdout,"%f %f %f # %d th vertex\n",
+                poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2],
+                i);
+    }
 
-    /* i th triangle */
-    /* for ( i = 0 ; i < poly.idx_num ; i++ ) { */
-    /*     fprintf(stdout,"%d %d %d # %d th triangle\n",  */
-    /*             poly.idx[i*3+0], poly.idx[i*3+1], poly.idx[i*3+2], */
-    /*             i); */
-    /* } */
+    //i th triangle
+    for ( i = 0 ; i < poly.idx_num ; i++ ) {
+        fprintf(stdout,"%d %d %d # %d th triangle\n",
+                poly.idx[i*3+0], poly.idx[i*3+1], poly.idx[i*3+2],
+                i);
+    }
 
     /* material info */
     fprintf(stderr, "diffuseColor %f %f %f\n", surface.diff[0], surface.diff[1], surface.diff[2]);
@@ -1118,14 +1118,6 @@ int main (int argc, char *argv[])
                 fputs(str, fp_ppm); 
             }
         }
-
-        //zバッファの出力
-         //zバッファを初期化
-        /* for(int i = 0; i < 256; i++){ */
-        /*     for(int j = 0; j < 256; j++){ */
-        /*         printf("\n%f\n", z_buf[i][j] = DBL_MAX); */
-        /*     } */
-        /* } */
     }
     fclose(fp_ppm);
     fclose(fp);
