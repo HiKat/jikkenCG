@@ -545,7 +545,8 @@ void shading(double *a, double *b, double *c, double *rgb_a, double *rgb_b, doub
                             s[2] = (s[2] / s_length);
                             
                             //内積sn
-                            double sn = ((s[0] * n[0]) + (s[1] * n[1]) + (s[2] * n[2]));
+                            double sn
+                                = ((s[0] * n[0]) + (s[1] * n[1]) + (s[2] * n[2]));
 
                             //debug
                             //printf("\nsn = %f\n", sn);
@@ -1155,11 +1156,156 @@ int main (int argc, char *argv[])
                 printf("\nエラー1026\n");
                 perror(NULL);
                 exit(0);
+                break;
                 }
             }
-                              
+
+            //ここで3点abcの輝度値を求めておく必要がある
+            double rgb_a[3], rgb_b[3], rgb_c[3];
+            //各点についてe,iベクトルを求める
+            //iベクトルは
+            double i_vec[3];
+            i_vec[0] = light_dir[0];
+            i_vec[1] = light_dir[1];
+            i_vec[2] = light_dir[2];
+            
+            //長さを1にする
+            double length_i =
+                sqrt(pow(i_vec[0], 2.0) + pow(i_vec[1], 2.0) + pow(i_vec[2], 2.0));
+            i_vec[0] = (i_vec[0] / length_i);
+            i_vec[1] = (i_vec[1] / length_i);
+            i_vec[2] = (i_vec[2] / length_i);
+
+
+            //eベクトルは
+            //各点空間内での座標は
+            for(int abc = 0; abc < 3; abc++){
+                double ABC[3];
+                //なお
+                /* A[0] = poly.vtx[(poly.idx[i*3+0])*3 + 0]; */
+                /* A[1] = poly.vtx[(poly.idx[i*3+0])*3 + 1]; */
+                /* A[2] = poly.vtx[(poly.idx[i*3+0])*3 + 2]; */
+                
+                /* B[0] = poly.vtx[(poly.idx[i*3+1])*3 + 0]; */
+                /* B[1] = poly.vtx[(poly.idx[i*3+1])*3 + 1]; */
+                /* B[2] = poly.vtx[(poly.idx[i*3+1])*3 + 2]; */
+                
+                /* C[0] = poly.vtx[(poly.idx[i*3+2])*3 + 0]; */
+                /* C[1] = poly.vtx[(poly.idx[i*3+2])*3 + 1]; */
+                /* C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2]; */
+                //より
+                ABC[0] = poly.vtx[(poly.idx[i*3+abc])*3 + 0];
+                ABC[1] = poly.vtx[(poly.idx[i*3+abc])*3 + 1];
+                ABC[2] = poly.vtx[(poly.idx[i*3+abc])*3 + 2];
+            
+                double e[3];
+                e[0] = -1 * ABC[0];
+                e[1] = -1 * ABC[1];
+                e[2] = -1 * ABC[2];
+            
+                //長さを1にする
+                double length_e =
+                    sqrt(pow(e[0], 2.0) + pow(e[1], 2.0) + pow(e[2], 2.0));
+                e[0] = (e[0] / length_e);
+                e[1] = (e[1] / length_e);
+                e[2] = (e[2] / length_e);
+                
+                //sベクトルは
+                double s[3];
+                s[0] = e[0] - i_vec[0];
+                s[1] = e[1] - i_vec[1];
+                s[2] = e[2] - i_vec[2];
+                            
+                //長さを1にする
+                double s_length =
+                    sqrt(pow(s[0], 2.0) + pow(s[1], 2.0) + pow(s[2], 2.0));
+                s[0] = (s[0] / s_length);
+                s[1] = (s[1] / s_length);
+                s[2] = (s[2] / s_length);
+                
+                //内積sn
+                double sn
+                    = ((s[0] * n[0]) + (s[1] * n[1]) + (s[2] * n[2]));
+                if(sn <= 0){
+                    //debug
+                    //printf("\ndebug at 1606\n");
+                    sn = 0;
+                    //exit(0);
+                }
+                //拡散反射
+                // 法線ベクトルnと光源方向ベクトルの内積
+                double ip =
+                    (n[0] * i_vec[0]) +
+                    (n[1] * i_vec[1]) +
+                    (n[2] * i_vec[2]);
+                
+                if(0 <= ip){
+                    ip = 0;
+                    //printf("\ndebug at 1550\n");
+                    //exit(0);
+                }
+                switch (abc){
+                case 0;
+                rgb_a[0] =
+                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                    ;
+                
+                rgb_a[1] =
+                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                    ;
+                
+                rgb_a[2] =
+                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                    ;
+                break;
+
+                case 1;
+                rgb_b[0] =
+                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                    ;
+                
+                rgb_b[1] =
+                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                    ;
+                
+                rgb_b[2] =
+                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                    ;
+                break;
+
+                case 2;
+                rgb_c[0] =
+                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                    ;
+                
+                rgb_c[1] =
+                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                    ;
+                
+                rgb_c[2] =
+                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                    ;
+                break;
+
+                default;
+                printf("\nエラー1136\n");
+                perror(NULL);
+                exit(0);
+                break;
+                }
+            }
+            
             //平面iの投影先の三角形をシェーディング
-            shading(a, b, c, na, nb, nc);
+            shading(a, b, c, rgb_a, rgb_b, rgb_c);
         }
 
 
