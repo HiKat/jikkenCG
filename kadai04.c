@@ -614,14 +614,52 @@ void shading(double *a, double *b, double *c,
 
             p2[0] = func1(q, r, p[1]);
             p2[1] = p[1];
+            
+            double P2[3];
+            P2[0] =
+                (poly_i_n_vec[0]*(p2[0]-(MAX/2)))
+                *
+                ((poly_i_n_vec[0]*A[0]) +
+                 (poly_i_n_vec[1]*A[1]) +
+                 (poly_i_n_vec[2]*A[2]))
+                /
+                ((poly_i_n_vec[0]*(p2[0]-(MAX/2))) +
+                 (poly_i_n_vec[1]*(p2[1]-(MAX/2))) +
+                 poly_i_n_vec[2]*FOCUS);
+            
+            P2[1] =
+                (poly_i_n_vec[1]*(p2[1]-(MAX/2)))
+                *
+                ((poly_i_n_vec[0]*A[0]) +
+                 (poly_i_n_vec[1]*A[1]) +
+                 (poly_i_n_vec[2]*A[2]))
+                /
+                ((poly_i_n_vec[0]*(p2[0]-(MAX/2))) +
+                 (poly_i_n_vec[1]*(p2[1]-(MAX/2))) +
+                 poly_i_n_vec[2]*FOCUS);
+            
+            P2[2] =
+                FOCUS
+                *
+                ((poly_i_n_vec[0]*A[0]) +
+                 (poly_i_n_vec[1]*A[1]) +
+                 (poly_i_n_vec[2]*A[2]))
+                /
+                ((poly_i_n_vec[0]*(p2[0]-(MAX/2))) +
+                 (poly_i_n_vec[1]*(p2[1]-(MAX/2))) +
+                 poly_i_n_vec[2]*FOCUS);
+            
 
             double rgb_p2[3];
+            for(int i; i < 3; i++){
+                rgb_p2[i]
+                    =
+                    rgb_q[i] * ((p[1]-r[1])/(q[1]-r[1]))
+                    +
+                    rgb_r[i] * ((q[1]-p[1])/(q[1]-r[1]));
+            }
+                
             
-            //!!!!!!!!!!!!!!!!!!!!!p2のrgbを求める必要がある!!!!!!!!!!!!!!!!!!!!!!
-            //!!!!!!!!!!!!!!!!!!!!!p2のrgbを求める必要がある!!!!!!!!!!!!!!!!!!!!!!
-            //!!!!!!!!!!!!!!!!!!!!!p2のrgbを求める必要がある!!!!!!!!!!!!!!!!!!!!!!
-            //!!!!!!!!!!!!!!!!!!!!!p2のrgbを求める必要がある!!!!!!!!!!!!!!!!!!!!!!
-            //p2の3次元空間内での座標も求める必要がある
             
             //p2のほうがpのx座標より大きくなるようにする
             if(p2[0] < p[0]){
@@ -646,9 +684,13 @@ void shading(double *a, double *b, double *c,
             /* printf("に分割してシェーディング\n"); */
             //分割しても同一平面上なので法線ベクトルと
             //平面上の任意の点は同じものを使える.
+
+            //shading(a, b, c, rgb_a, rgb_b, rgb_c, A, B, C, poly_i_n_vec);
+
+            //求める必要があるのはrgb_p2とP2
             
-            shading(p, p2, q, rgb_p, rgb_p2, rgb_q);
-            shading(p, p2, r, rgb_p, rgb_p2, rgb_r);
+            shading(p, p2, q, rgb_p, rgb_p2, rgb_q, P, P2, Q, poly_i_n_vec);
+            shading(p, p2, r, rgb_p, rgb_p2, rgb_r, P, P2, R, poly_i_n_vec);
         }
     }
 }
