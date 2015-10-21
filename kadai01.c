@@ -37,38 +37,38 @@
 
 
 //パターン2=======================
-#define VER_NUM 6
-#define SUR_NUM 2
-const double ver[VER_NUM][3] = {
-    {-200, 0, 500},
-    {200, -100, 500},
-    {100, -200, 400},
-    {-100, -100, 500},
-    {50, 200,  400},
-    {100, 100, 500}
-};
-const int sur[SUR_NUM][3] = {
-    {0, 1, 2},
-    {3, 4, 5},
-};
+/* #define VER_NUM 6 */
+/* #define SUR_NUM 2 */
+/* const double ver[VER_NUM][3] = { */
+/*     {-200, 0, 500}, */
+/*     {200, -100, 500}, */
+/*     {100, -200, 400}, */
+/*     {-100, -100, 500}, */
+/*     {50, 200,  400}, */
+/*     {100, 100, 500} */
+/* }; */
+/* const int sur[SUR_NUM][3] = { */
+/*     {0, 1, 2}, */
+/*     {3, 4, 5}, */
+/* }; */
 //================================
 
 
 
 //パターン3（ランダム座標）=======
-/* #define VER_NUM 5 */
-/* #define SUR_NUM 4 */
+#define VER_NUM 5
+#define SUR_NUM 4
 
-/* //ランダムな座標を格納するための領域を確保 */
-/* //頂点座標はmain関数内で格納 */
-/* double ver[VER_NUM][3]; */
+//ランダムな座標を格納するための領域を確保
+//頂点座標はmain関数内で格納
+double ver[VER_NUM][3];
 
-/* const int sur[SUR_NUM][3] = { */
-/*     {0, 1, 2}, */
-/*     {0, 2, 3}, */
-/*     {0, 3, 4}, */
-/*     {0, 4, 1} */
-/* }; */
+const int sur[SUR_NUM][3] = {
+    {0, 1, 2},
+    {0, 2, 3},
+    {0, 3, 4},
+    {0, 4, 1}
+};
 //================================
 
 
@@ -109,14 +109,9 @@ double func1(double *p, double *q, double y){
         perror(NULL);
         return -1;
     }
-    //printf("check x = %f\n", x);
-    //printf("check p[0] = %f\n", p[0]);
     return x;
 }
 
-//3点a[2] = {x, y},,,が1直線上にあるかどうかを判定する関数
-//1直線上に無ければreturn 0;
-//1直線上にあればreturn 1;
 int lineOrNot(double *a, double *b, double *c){
     if(a[0] == b[0]){
         if(a[0] == c[0]){
@@ -136,7 +131,6 @@ int lineOrNot(double *a, double *b, double *c){
     }
 }
 
-//頂点座標の配列verに透視投影を行う関数
 void perspective_pro(){
     for(int i = 0; i < VER_NUM; i++){
         double xp = ver[i][0];
@@ -156,20 +150,11 @@ void perspective_pro(){
     }
 }
 
-//投影された三角形abcにラスタライズ、クリッピングでシェーディングを行う関数
-//引数a, b, cは投影平面上の3点
-//eg)
-//double a = {1.0, 2.0};
-//nは法線ベクトル
+
 void shading(double *a, double *b, double *c, double *n){
     //3点が1直線上に並んでいるときはシェーディングができない
     if(lineOrNot(a, b, c) == 1){
-        //塗りつぶす点が無いので何もしない.
-        
-        //debug
-        /* printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nは一直線上の3点です\n" */
-        /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
-        
+        //塗りつぶす点が無いので何もしない.       
     }
     else{
         //y座標の値が真ん中点をp、その他の点をq、rとする
@@ -219,19 +204,10 @@ void shading(double *a, double *b, double *c, double *n){
                 }
             }
         }
-
-        //debug
-        /* printf("\n3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-        /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
         
         //分割可能な三角形かを判定
         if(p[1] == r[1] || p[1] == q[1]){
             //分割できない
-
-            //debug
-            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割できないのでこのままシェーディング\n" */
-            /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-
             
             //長さが1の光源方向ベクトルを作成する
             //光源方向ベクトルの長さ
@@ -263,27 +239,10 @@ void shading(double *a, double *b, double *c, double *n){
                     memcpy(temp, r, sizeof(double) * 2);
                     memcpy(r, p, sizeof(double) * 2);
                     memcpy(p, temp, sizeof(double) * 2);
-                    
-                    //debug
-                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-                    
                 }
-                
-                //debug
-                if(r[0] == p[0]){
-                  perror("エラー958");
-                }
-                
                 //シェーディング処理
-                //シェーディングの際に画面からはみ出した部分をどう扱うか
-                //以下の実装はxy座標の範囲を0 <= x, y <= 256として実装している
                 //三角形pqrをシェーディング
                 //y座標はp <= r
-                //debug
-                if(r[1] < p[1]){
-                    perror("エラーat1855");
-                }
                 
                 int i;
                 i = ceil(p[1]);         
@@ -324,28 +283,13 @@ void shading(double *a, double *b, double *c, double *n){
                     double temp[2];
                     memcpy(temp, q, sizeof(double) * 2);
                     memcpy(q, p, sizeof(double) * 2);
-                    memcpy(p, temp, sizeof(double) * 2);
-                    
-                    //debug
-                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-                    
-                }
-                
-                //debug
-                if(q[0] == p[0]){
-                    perror("エラーat1011");            
+                    memcpy(p, temp, sizeof(double) * 2);               
                 }
                 
                 //シェーディング処理
                 //三角形pqrをシェーディング
                 //y座標はp <= q
-                
-                //debug
-                if(q[1] < p[1]){
-                    perror("エラーat1856");
-                }
-                
+                               
                 int i;
                 i = ceil(r[1]);
             
@@ -418,19 +362,29 @@ int main(void){
     //ファイルが開けたとき
     else{
         //頂点座標をランダムに設定=================================
-        /* srand(10); */
-        /* for(int i = 0; i < VER_NUM; i++){ */
-        /*     ver[i][0] = rand() % 80; */
-        /*     ver[i][1] = rand() % 80; */
-        /*     ver[i][2] = rand() % 50 + 30; */
-        /* } */
-        //======================================================
+        srand(10);
+        
+        ver[0][0] = 0 + (rand()%30) - (rand()%30);
+        ver[0][1] = 0 + (rand()%50) - (rand()%50);
+        ver[0][2] = 400 + (rand()%50) - (rand()%50);
+        
+        ver[1][0] = -200 + (rand()%50) - (rand()%50);
+        ver[1][1] = 0 + (rand()%50) - (rand()%50);
+        ver[1][2] = 500 + (rand()%50) - (rand()%50);
+        
+        ver[2][0] = 0 + (rand()%50) - (rand()%50);
+        ver[2][1] = 150 + (rand()%50) - (rand()%50);
+        ver[2][2] = 500 + (rand()%50) - (rand()%50);
+        
+        ver[3][0] = 200 + (rand()%50) - (rand()%50);
+        ver[3][1] = 0 + (rand()%50) - (rand()%50);
+        ver[3][2] = 500 + (rand()%50) - (rand()%50);
 
-        fprintf(stderr, "\n初期の頂点座標は以下\n");
-        for(int i = 0; i < VER_NUM; i++){
-            fprintf(stderr, "%f\t%f\t%f\n", ver[i][0], ver[i][1], ver[i][2]);
-        }
-        fprintf(stderr, "\n");
+        ver[4][0] = 0 + (rand()%50) - (rand()%50);
+        ver[4][1] = -150 + (rand()%50) - (rand()%50);
+        ver[4][2] = 500 + (rand()%50) - (rand()%50);
+
+        //=======================================================
         
         //描画領域を初期化=======================================
         for(int i = 0; i < 256; i++){
@@ -454,12 +408,6 @@ int main(void){
 
         //各点の透視投影処理
         perspective_pro();
-       
-        /* printf("\n撮像領域上の各点の座標のprojected_verの値\n"); */
-        /* for(int i = 0; i < VER_NUM; i++){ */
-        /*     printf("%f\t%f\n", projected_ver[i][0], projected_ver[i][1]); */
-        /* } */
-        /* printf("\n"); */
 
         //シェーディング
         for(int i = 0; i < SUR_NUM; i++){
@@ -471,16 +419,6 @@ int main(void){
             b[1] = projected_ver[(sur[i][1])][1];            
             c[0] = projected_ver[(sur[i][2])][0];
             c[1] = projected_ver[(sur[i][2])][1];
-            
-            //debug
-            /* printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nのシェーディングを行います.\n" */
-            /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
-
-
-            //冗長な処理
-            //透視投影処理の際に法線ベクトル、
-            //光源からの距離を同時に求めておけばよかったが
-            //今更変更できないのでここで再び求める
             
             //法線ベクトルを計算
             //投影前の3点の座標を取得
@@ -496,12 +434,6 @@ int main(void){
             C[0] = ver[(sur[i][2])][0];
             C[1] = ver[(sur[i][2])][1];
             C[2] = ver[(sur[i][2])][2];
-
-            //debug
-            /* printf("\n3次元空間内の3点の座標は\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\nです\n", */
-            /*        A[0], A[1], A[2], */
-            /*        B[0], B[1], B[2], */
-            /*        C[0], C[1], C[2]); */
             
             //ベクトルAB, ACから外積を計算して
             //法線ベクトルnを求める
@@ -528,11 +460,6 @@ int main(void){
             n[1] = n[1] / length_n;
             n[2] = n[2] / length_n;
 
-            //debug
-            /* printf("\n法線ベクトルは\n(%f,\t%f,\t%f)\nです\n", */
-            /*        n[0], n[1], n[2]); */
-
-            
             //平面iの投影先の三角形をシェーディング
             shading(a, b, c, n);
         }

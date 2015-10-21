@@ -238,6 +238,7 @@ void shading(double *a, double *b, double *c,
             light_dir_vec[2] = light_dir[2] / length_l;
                             
             //2パターンの三角形を特定
+            //Type 1
             if(p[1] == r[1]){
                 //debug
                 //printf("\np[1] == r[1]\n");
@@ -343,7 +344,9 @@ void shading(double *a, double *b, double *c,
                                    /
                                    ((poly_i_n_vec[0]*(j-(MAX/2))) +
                                     (poly_i_n_vec[1]*(i-(MAX/2))) +
-                                    poly_i_n_vec[2]*FOCUS);
+                                    (poly_i_n_vec[2]*FOCUS));
+
+                               //printf("\np_z = %f\n", p_z);
 
                                
                                //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
@@ -353,7 +356,8 @@ void shading(double *a, double *b, double *c,
                                    //printf("\np_or[2] = %f\n", p_or[2]);
                                    //exit(0);
                                }
-                               
+
+                               //Type 1
                                else{
                                    image[i][j][0] =
                                        (
@@ -399,9 +403,10 @@ void shading(double *a, double *b, double *c,
                                    //printf("\nzバッファを更新しました.\n");
                                    z_buf[i][j] = p_z;
                                    //debug
+                                   //printf("\nDBL_MAX = %f\n", DBL_MAX); 
                                    //printf("\nz_buf => %f\n", z_buf[i][j]);
                                    /* if(z_buf[i][j] < 398 || 505 < z_buf[i][j]){ */
-                                   /*     printf("\nzバッファの値が不正です\n"); */
+                                   /*     printf("\nzバッファの値が不正です 1405\n"); */
                                    /*     printf("\nz_buf => %f\n", z_buf[i][j]); */
                                    /*     perror(NULL); */
                                    /*     exit(0); */
@@ -529,16 +534,24 @@ void shading(double *a, double *b, double *c,
                                 ((poly_i_n_vec[0]*(j-(MAX/2))) +
                                  (poly_i_n_vec[1]*(i-(MAX/2))) +
                                  poly_i_n_vec[2]*FOCUS);
+
+                            //printf("\np_z = %f\n", p_z);
                             
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                             if(z_buf[i][j] < p_z){
                                 //debug
-                                //printf("\n描画されない点です at 1614\n");
-                                //printf("\np_or[2] = %f\n", p_or[2]);
+                                printf("\n描画されない点です at 1614\n");
+                                printf("\np_z = %f\n", p_z);
                                 //exit(0);
+                                
                             }
                         
                             else{
+
+                                //debug
+                                //printf("\ncheck! 1258\n");
+
+                                //Type 2                         
                                 image[i][j][0] =
                                     (
                                      ((x2-j) / (x2-x1))
@@ -951,22 +964,24 @@ int main (int argc, char *argv[])
     fp = fopen(argv[1], "r");
     read_one_obj(fp, &poly, &surface);
 
-    fprintf(stderr,"%d vertice are found.\n",poly.vtx_num);
-    fprintf(stderr,"%d triangles are found.\n",poly.idx_num);
+    fprintf(stderr,"%d vertice are found.(poly.vtx_num)\n",poly.vtx_num);
+    fprintf(stderr,"%d triangles are found.(poly.idx_num)\n",poly.idx_num);
 
-    /* i th vertex */
-    /* for ( i = 0 ; i < poly.vtx_num ; i++ ) { */
-    /*     fprintf(stdout,"%f %f %f # %d th vertex\n",  */
-    /*             poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2], */
-    /*             i); */
-    /* } */
+    //i th vertex
+    printf("\npoly.vtx[i*3+0,1,2]\n");
+    for ( i = 0 ; i < poly.vtx_num ; i++ ) {
+        fprintf(stdout,"%f %f %f # %d th vertex\n",
+                poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2],
+                i);
+    }
 
-    /* i th triangle */
-    /* for ( i = 0 ; i < poly.idx_num ; i++ ) { */
-    /*     fprintf(stdout,"%d %d %d # %d th triangle\n",  */
-    /*             poly.idx[i*3+0], poly.idx[i*3+1], poly.idx[i*3+2], */
-    /*             i); */
-    /* } */
+    //i th triangle
+    printf("\npoly.idx[i*3+0,1,2]\n");
+    for ( i = 0 ; i < poly.idx_num ; i++ ) {
+        fprintf(stdout,"%d %d %d # %d th triangle\n",
+                poly.idx[i*3+0], poly.idx[i*3+1], poly.idx[i*3+2],
+                i);
+    }
 
     /* material info */
     fprintf(stderr, "diffuseColor %f %f %f\n", surface.diff[0], surface.diff[1], surface.diff[2]);
@@ -1044,6 +1059,7 @@ int main (int argc, char *argv[])
         //三角形iは3点A、B、Cからなる
         //この3点で形成される三角形の法線ベクトルを求めてpoly_nに格納していく
         for(int i = 0; i < poly.idx_num; i++){
+            //三角形iの各頂点の座標
             double A[3], B[3], C[3];
             A[0] = poly.vtx[(poly.idx[i*3+0])*3 + 0];
             A[1] = poly.vtx[(poly.idx[i*3+0])*3 + 1];
@@ -1093,7 +1109,15 @@ int main (int argc, char *argv[])
             poly_n[i*3 + 2] = n[2];
         }
         //三角形iの法線ベクトルがpoly_nに格納された.
-
+        //debug
+        printf("\npoly_n\n");
+        for(i = 0 ; i < poly.idx_num ; i++){
+            fprintf(stdout,"%f %f %f # %d th triangle\n",
+                    poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2],
+                    i);
+        }
+       
+        
         //シェーディング
         //三角形ごとのループ
         for(int i = 0; i < poly.idx_num; i++){
@@ -1366,7 +1390,7 @@ int main (int argc, char *argv[])
             //(poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2])
             double poly_i_n_vec[3]
                 = {poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2]};
-            
+
             shading(a, b, c, rgb_a, rgb_b, rgb_c, A, B, C, poly_i_n_vec);
         }
 
