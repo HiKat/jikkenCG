@@ -16,7 +16,8 @@
 #define MAX 255
 #define MAX_STRING "255"
 #define FOCUS 256.0
-#define Z_BUF_MAX 
+#define Z_BUF_MAX
+#define ENV_LIGHT 1.0
 
 //diffuseColorを格納する配列
 double diffuse_color[3];
@@ -1312,62 +1313,92 @@ int main (int argc, char *argv[])
                     //exit(0);
                 }
                 switch(abc){
+                    //surface.ambiが
                 case 0:
-                rgb_a[0] =
-                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                    ;
-                
-                rgb_a[1] =
-                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                    ;
-                
-                rgb_a[2] =
-                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                    ;
-                break;
-
+                    
+                    rgb_a[0] =
+                        //拡散反射
+                        (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                        //鏡面反射
+                        + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    
+                    rgb_a[1] =
+                        //拡散反射
+                        (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                        //鏡面反射
+                        + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    
+                    rgb_a[2] =
+                        //拡散反射
+                        (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                        //鏡面反射
+                        + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    break;
+                    
                 case 1:
-                rgb_b[0] =
-                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                    ;
-                
-                rgb_b[1] =
-                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                    ;
-                
-                rgb_b[2] =
-                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                    ;
-                break;
-
+                    rgb_b[0] =
+                        //拡散反射
+                        (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                        //鏡面反射
+                        + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    
+                    rgb_b[1] =
+                        //拡散反射
+                        (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                        //鏡面反射
+                        + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    
+                    rgb_b[2] =
+                        (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                        + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    break;
+                    
                 case 2:
-                rgb_c[0] =
-                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                    ;
-                
-                rgb_c[1] =
-                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                    ;
-                
-                rgb_c[2] =
-                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                    ;
-                break;
-
+                    rgb_c[0] =
+                        (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                        + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    
+                    rgb_c[1] =
+                        (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                        + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    
+                    rgb_c[2] =
+                        (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                        + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                        //環境反射
+                        + surface.ambi * ENV_LIGHT * MAX
+                        ;
+                    break;
+                    
                 default:
-                printf("\nエラー1136\n");
-                perror(NULL);
-                exit(0);
-                break;
+                    printf("\nエラー1136\n");
+                    perror(NULL);
+                    exit(0);
+                    break;
                 }
             }
             

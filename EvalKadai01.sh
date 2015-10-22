@@ -2,8 +2,7 @@
 SRC=kadai01.c
 
 echo start!!
-rm image.ppm
 gcc -Wall $SRC
-./a.out
+./a.out 
 open image.ppm
 echo completed!! "\xF0\x9f\x8d\xbb"
