@@ -541,8 +541,8 @@ void shading(double *a, double *b, double *c,
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                             if(z_buf[i][j] < p_z){
                                 //debug
-                                printf("\n描画されない点です at 1614\n");
-                                printf("\np_z = %f\n", p_z);
+                                /* printf("\n描画されない点です at 1614\n"); */
+                                /* printf("\np_z = %f\n", p_z); */
                                 //exit(0);
                                 
                             }
@@ -1008,13 +1008,6 @@ int main (int argc, char *argv[])
     
     //ファイルが開けたとき
     else{
-        /* fprintf(stderr, "\n初期の頂点座標は以下\n"); */
-        /* for(int i = 0; i < poly.vtx_num; i++){ */
-        /*     //fprintf(stderr, "%f\t%f\t%f\n", ver[i][0], ver[i][1], ver[i][2]); */
-        /*     fprintf(stderr, "%f\t%f\t%f\n", poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2]); */
-        /* } */
-        /* fprintf(stderr, "\n"); */
-        
         //描画領域を初期化
         for(int i = 0; i < 256; i++){
             for(int j = 0; j < 256; j++){
@@ -1056,7 +1049,9 @@ int main (int argc, char *argv[])
         //各頂点の法線ベクトルを求める
         //三角形iの法線ベクトルを求めて配列に格納する（グローバル領域に保存）
         double poly_n[poly.idx_num * 3];
-        
+
+
+        //=======================================================================
         //三角形iは3点A、B、Cからなる
         //この3点で形成される三角形の法線ベクトルを求めてpoly_nに格納していく
         for(int i = 0; i < poly.idx_num; i++){
@@ -1075,7 +1070,7 @@ int main (int argc, char *argv[])
             C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2];
 
             //debug
-            /* printf("\n3次元空間内の3点の座標は\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\nです\n", */
+            /* printf("\n三角形%dの3点の座標は\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\nです\n", i , */
             /*        A[0], A[1], A[2], */
             /*        B[0], B[1], B[2], */
             /*        C[0], C[1], C[2]); */
@@ -1109,20 +1104,216 @@ int main (int argc, char *argv[])
             poly_n[i*3 + 1] = n[1];
             poly_n[i*3 + 2] = n[2];
         }
+        //=======================================================================
+
+
         //三角形iの法線ベクトルがpoly_nに格納された.
         //debug
         printf("\npoly_n\n");
-        for(i = 0 ; i < poly.idx_num ; i++){
+        for(int i = 0 ; i < poly.idx_num ; i++){
             fprintf(stdout,"%f %f %f # %d th triangle\n",
                     poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2],
                     i);
         }
-       
+
+        //各点の平均、正規化した法線ベクトルを求める==================================================
+        //点iの法線ベクトルをもとめて専用の配列に格納する
+        //頂点iの法線ベクトルは
+        //(poly_ave_i[i*3+0], poly_ave_i[i*3+1], poly_ave_i[i*3+2])
+        double poly_ave_i[poly.vtx_num];
+        //点iが隣接する平面を探索
+        for(int i = 0; i < poly.vtx_num; i++){
+            double sum_vec[3] = {0.0, 0.0, 0.0};
+            int count = 0;
+            //三角形jの中に頂点iが含まれるかを判定
+            for(int j = 0; j < poly.idx_num; j++){
+                //プログラムの可読性を保つためバラして書く
+                if(poly.idx[j*3+0] == i||
+                   poly.idx[j*3+1] == i||
+                   poly.idx[j*3+2] == i){
+                    sum_vec[0] =  sum_vec[0] + poly_n[j*3+0];
+                    sum_vec[1] =  sum_vec[1] + poly_n[j*3+1];
+                    sum_vec[2] =  sum_vec[2] + poly_n[j*3+2];
+                    count++;
+                }
+            }
+            //点iの法線ベクトルを隣接平面の法線ベクトルの平均を正規化して計算する
+            double ni_vec[3];
+            if(count == 0){
+                printf("\n warning!! 1128\n");
+                printf("\n i = %d\n" ,i);
+                exit(0);
+            }
+            ni_vec[0] = sum_vec[0] / count;
+            ni_vec[1] = sum_vec[1] / count;
+            ni_vec[2] = sum_vec[2] / count;
+            
+            double length_ni_vec =
+                sqrt(pow(ni_vec[0], 2.0)+
+                     pow(ni_vec[1], 2.0)+
+                     pow(ni_vec[2], 2.0));
+            if(length_ni_vec == 0){
+                printf("\n warning!! 1129\n");
+                exit(0);
+            }
+            ni_vec[0] = ni_vec[0] / length_ni_vec;
+            ni_vec[1] = ni_vec[1] / length_ni_vec;
+            ni_vec[2] = ni_vec[2] / length_ni_vec;
+
+            //頂点iの法線ベクトルを格納
+            poly_ave_i[i*3+0] = ni_vec[0];
+            poly_ave_i[i*3+1] = ni_vec[1];
+            poly_ave_i[i*3+2] = ni_vec[2];
+
+            //debug
+            double length_ply_ave =
+                sqrt(pow(poly_ave_i[i*3+0], 2.0)+
+                     pow(poly_ave_i[i*3+1], 2.0)+
+                     pow(poly_ave_i[i*3+2], 2.0));
+            if(length_ply_ave == 0){
+                printf("\n warning!! 1151 \n");
+                exit(0);
+            }
+        }
+        //======================================================================================
+
+
+        //点iの法線ベクトルがpoly_ave_iに格納された.
+        //debug
+        printf("\npoly_ave_i\n");
+        for(int i = 0 ; i < poly.idx_num ; i++){
+            fprintf(stdout,"%f %f %f # %d th vertex\n",
+                    poly_ave_i[i*3+0], poly_ave_i[i*3+1], poly_ave_i[i*3+2],
+                    i);
+        }
+
+
+
         
+        //各点の輝度値を決定する===================================================================
+        //点iの輝度値を専用の配列に格納
+        double rgb_i[poly.vtx_num*3];
+        //点iの輝度値は
+        //(rgb_i[i*3+0], rgb_i[i*3+0], rgb_i[i*3+0],)
+        
+        //点iのiベクトルは平行光源を使うと全ての点において
+        //同じになるので予め用意する==============
+        double i_vec[3];
+        i_vec[0] = light_dir[0];
+        i_vec[1] = light_dir[1];
+        i_vec[2] = light_dir[2];
+        double length_i =
+            sqrt(pow(i_vec[0], 2.0) + pow(i_vec[1], 2.0) + pow(i_vec[2], 2.0));
+        if(length_i == 0){
+                printf("\n warning! 11403\n");
+                exit(0);
+            }
+        i_vec[0] = (i_vec[0] / length_i);
+        i_vec[1] = (i_vec[1] / length_i);
+        i_vec[2] = (i_vec[2] / length_i);
+        //====================================
+        
+        for(int i = 0; i < poly.vtx_num; i++){
+            //eベクトル=========================
+            double e[3];
+            e[0] = -1 * poly.vtx[i*3+0];
+            e[1] = -1 * poly.vtx[i*3+1];
+            e[2] = -1 * poly.vtx[i*3+2];
+            double length_e =
+                sqrt(pow(e[0], 2.0) + pow(e[1], 2.0) + pow(e[2], 2.0));
+            if(length_e == 0){
+                printf("\n warning! 11400\n");
+                exit(0);
+            }
+            e[0] = (e[0] / length_e);
+            e[1] = (e[1] / length_e);
+            e[2] = (e[2] / length_e);
+            //=================================
+
+            //sベクトル=========================
+            double s[3];
+            s[0] = e[0] - i_vec[0];
+            s[1] = e[1] - i_vec[1];
+            s[2] = e[2] - i_vec[2];
+            double length_s =
+                sqrt(pow(s[0], 2.0) + pow(s[1], 2.0) + pow(s[2], 2.0));
+            if(length_s == 0){
+                printf("\n warning! 11401\n");
+                exit(0);
+            }
+            s[0] = (s[0] / length_s);
+            s[1] = (s[1] / length_s);
+            s[2] = (s[2] / length_s);
+            //=================================
+
+
+            //iベクトルとnベクトルの内積を計算
+            double ip =
+                (poly_ave_i[i*3+0] * i_vec[0]) +
+                (poly_ave_i[i*3+1] * i_vec[1]) +
+                (poly_ave_i[i*3+2] * i_vec[2]);
+            
+            if(0 <= ip){
+                ip = 0;
+                //printf("\ndebug at 1550\n");
+                //exit(0);
+            }
+
+            //内積sn
+            double sn
+                = ((s[0] * poly_ave_i[i*3+0]) +
+                   (s[1] * poly_ave_i[i*3+1]) +
+                   (s[2] * poly_ave_i[i*3+2]));
+            if(sn <= 0){
+                //debug
+                //printf("\ndebug at 1606\n");
+                sn = 0;
+                //exit(0);
+            }
+
+            //頂点iの輝度値を計算
+            rgb_i[i*3+0] =
+                //拡散反射
+                (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
+                //鏡面反射
+                + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
+                //環境反射
+                + surface.ambi * ENV_LIGHT * MAX
+                ;
+            
+            rgb_i[i*3+1] =
+                //拡散反射
+                (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
+                //鏡面反射
+                + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
+                //環境反射
+                + surface.ambi * ENV_LIGHT * MAX
+                ;
+            
+            rgb_i[i*3+2] =
+                //拡散反射
+                (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
+                //鏡面反射
+                + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
+                //環境反射
+                + surface.ambi * ENV_LIGHT * MAX
+                ;
+
+
+            //debug
+            printf("\nrgb_i=(%f\t%f\t%f), i=%d\n", rgb_i[i*3+0], rgb_i[i*3+1], rgb_i[i*3+2], i);
+        }
+        //======================================================================================
+        
+
+        
+                                
         //シェーディング
-        //三角形ごとのループ
+        //ポリゴンiをシェーディング=======================================================================
+        //============================================================================================
+        
         for(int i = 0; i < poly.idx_num; i++){
-            //各点の透視投影処理
+            //三角形の各点の透視投影処理===========================================
             for(int j = 0; j < 3; j++){ 
                 double xp = poly.vtx[(poly.idx[i*3+j])*3 + 0];
                 double yp = poly.vtx[(poly.idx[i*3+j])*3 + 1];
@@ -1136,6 +1327,7 @@ int main (int argc, char *argv[])
                 if(zp == 0){
                     printf("\n(%f\t%f\t%f) i=%d, j=%d\n", xp, yp, zp, i, j);
                     perror("\nエラー0934\n");
+                    exit(0);
                     //break;
                 }
                 
@@ -1147,6 +1339,7 @@ int main (int argc, char *argv[])
                 projected_ver_buf[j][0] = (MAX / 2) + xp2;
                 projected_ver_buf[j][1] = (MAX / 2) + yp2;
             }
+ 
             
             double a[2], b[2], c[2];
             a[0] = projected_ver_buf[0][0];
@@ -1155,269 +1348,44 @@ int main (int argc, char *argv[])
             b[1] = projected_ver_buf[1][1];
             c[0] = projected_ver_buf[2][0];
             c[1] = projected_ver_buf[2][1];
-            
-            //debug
-            /* printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nのシェーディングを行います.\n" */
-            /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
+            //===================================================================
 
-            //3点abc（投影後の三角形i）の各頂点の法線ベクトルをそれぞれ計算して関数shadingに引き渡す
-            //a、b、cの頂点番号はpoly.idx[i*3+j] (j = 1, 2, 3)
-            double na[3], nb[3], nc[3];
-            double sum_vec[3] = {0, 0, 0};
-            int count = 0;
-            for(int l = 0; l < 3; l++){
-                for(int k = 0; k < poly.idx_num; k++){
-                    if(poly.idx[k*3+0] == poly.idx[i*3+0] ||
-                       poly.idx[k*3+1] == poly.idx[i*3+0] ||
-                       poly.idx[k*3+2] == poly.idx[i*3+0]){
-                        sum_vec[0] =  sum_vec[0] + poly_n[k*3+0];
-                        sum_vec[1] =  sum_vec[1] + poly_n[k*3+1];
-                        sum_vec[2] =  sum_vec[2] + poly_n[k*3+2];
-                        count++;
-                    }
-                    else{}
-                }
-                switch(l){
-                case 0:
-                na[0] = sum_vec[0] / count;
-                na[1] = sum_vec[1] / count;
-                na[2] = sum_vec[2] / count;
-                break;
+            //点a、b、cがそれぞれ何番目の頂点かを参照
 
-                case 1:
-                nb[0] = sum_vec[0] / count;
-                nb[1] = sum_vec[1] / count;
-                nb[2] = sum_vec[2] / count;
-                break;
+            int index_a = poly.idx[i*3+0];
+            int index_b = poly.idx[i*3+1];
+            int index_c = poly.idx[i*3+2];
 
-                case 2:
-                nc[0] = sum_vec[0] / count;
-                nc[1] = sum_vec[1] / count;
-                nc[2] = sum_vec[2] / count;
-                break;
-
-                default:
-                printf("\nエラー1026\n");
-                perror(NULL);
-                exit(0);
-                break;
-                }
-            }
-
-            //ここで3点abcの輝度値を求めておく必要がある
+            //点iの輝度値を参照する
             double rgb_a[3], rgb_b[3], rgb_c[3];
-            //各点についてe,iベクトルを求める
-            //iベクトルは
-            double i_vec[3];
-            i_vec[0] = light_dir[0];
-            i_vec[1] = light_dir[1];
-            i_vec[2] = light_dir[2];
+            rgb_a[0] = rgb_i[index_a*3+0];
+            rgb_a[1] = rgb_i[index_a*3+1];
+            rgb_a[2] = rgb_i[index_a*3+2];
             
-            //長さを1にする
-            double length_i =
-                sqrt(pow(i_vec[0], 2.0) + pow(i_vec[1], 2.0) + pow(i_vec[2], 2.0));
-            i_vec[0] = (i_vec[0] / length_i);
-            i_vec[1] = (i_vec[1] / length_i);
-            i_vec[2] = (i_vec[2] / length_i);
-
-
-            //eベクトルは
-            //各点空間内での座標は
-            for(int abc = 0; abc < 3; abc++){
-                double ABC[3];
-                //なお
-                /* A[0] = poly.vtx[(poly.idx[i*3+0])*3 + 0]; */
-                /* A[1] = poly.vtx[(poly.idx[i*3+0])*3 + 1]; */
-                /* A[2] = poly.vtx[(poly.idx[i*3+0])*3 + 2]; */
-                
-                /* B[0] = poly.vtx[(poly.idx[i*3+1])*3 + 0]; */
-                /* B[1] = poly.vtx[(poly.idx[i*3+1])*3 + 1]; */
-                /* B[2] = poly.vtx[(poly.idx[i*3+1])*3 + 2]; */
-                
-                /* C[0] = poly.vtx[(poly.idx[i*3+2])*3 + 0]; */
-                /* C[1] = poly.vtx[(poly.idx[i*3+2])*3 + 1]; */
-                /* C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2]; */
-                
-                ABC[0] = poly.vtx[(poly.idx[i*3+abc])*3 + 0];
-                ABC[1] = poly.vtx[(poly.idx[i*3+abc])*3 + 1];
-                ABC[2] = poly.vtx[(poly.idx[i*3+abc])*3 + 2];
+            rgb_b[0] = rgb_i[index_b*3+0];
+            rgb_b[1] = rgb_i[index_b*3+1];
+            rgb_b[2] = rgb_i[index_b*3+2];
             
-                double e[3];
-                e[0] = -1 * ABC[0];
-                e[1] = -1 * ABC[1];
-                e[2] = -1 * ABC[2];
-            
-                //長さを1にする
-                double length_e =
-                    sqrt(pow(e[0], 2.0) + pow(e[1], 2.0) + pow(e[2], 2.0));
-                e[0] = (e[0] / length_e);
-                e[1] = (e[1] / length_e);
-                e[2] = (e[2] / length_e);
-                
-                //sベクトルは
-                double s[3];
-                s[0] = e[0] - i_vec[0];
-                s[1] = e[1] - i_vec[1];
-                s[2] = e[2] - i_vec[2];
-                            
-                //長さを1にする
-                double s_length =
-                    sqrt(pow(s[0], 2.0) + pow(s[1], 2.0) + pow(s[2], 2.0));
-                s[0] = (s[0] / s_length);
-                s[1] = (s[1] / s_length);
-                s[2] = (s[2] / s_length);
-
-                //法線ベクトルnを求める
-                double n[3];
-                switch(abc){
-                case 0:
-                    n[0] = na[0];
-                    n[1] = na[1];
-                    n[2] = na[2];
-                    break;
-                case 1:
-                    n[0] = na[0];
-                    n[1] = na[1];
-                    n[2] = na[2];
-                    break;
-                case 2:
-                    n[0] = na[0];
-                    n[1] = na[1];
-                    n[2] = na[2];
-                    break;
-                default:
-                    printf("\nエラー1546\n");
-                    perror(NULL);
-                    exit(0);
-                    break;
-                }
-                //内積sn
-                double sn
-                    = ((s[0] * n[0]) + (s[1] * n[1]) + (s[2] * n[2]));
-                if(sn <= 0){
-                    //debug
-                    //printf("\ndebug at 1606\n");
-                    sn = 0;
-                    //exit(0);
-                }
-                //拡散反射
-                // 法線ベクトルnと光源方向ベクトルの内積
-                double ip =
-                    (n[0] * i_vec[0]) +
-                    (n[1] * i_vec[1]) +
-                    (n[2] * i_vec[2]);
-                
-                if(0 <= ip){
-                    ip = 0;
-                    //printf("\ndebug at 1550\n");
-                    //exit(0);
-                }
-                switch(abc){
-                    //surface.ambiが
-                case 0:
-                    
-                    rgb_a[0] =
-                        //拡散反射
-                        (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                        //鏡面反射
-                        + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    
-                    rgb_a[1] =
-                        //拡散反射
-                        (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                        //鏡面反射
-                        + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    
-                    rgb_a[2] =
-                        //拡散反射
-                        (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                        //鏡面反射
-                        + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    break;
-                    
-                case 1:
-                    rgb_b[0] =
-                        //拡散反射
-                        (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                        //鏡面反射
-                        + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    
-                    rgb_b[1] =
-                        //拡散反射
-                        (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                        //鏡面反射
-                        + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    
-                    rgb_b[2] =
-                        (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                        + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    break;
-                    
-                case 2:
-                    rgb_c[0] =
-                        (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                        + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    
-                    rgb_c[1] =
-                        (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                        + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    
-                    rgb_c[2] =
-                        (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                        + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                        //環境反射
-                        + surface.ambi * ENV_LIGHT * MAX
-                        ;
-                    break;
-                    
-                default:
-                    printf("\nエラー1136\n");
-                    perror(NULL);
-                    exit(0);
-                    break;
-                }
-            }
+            rgb_c[0] = rgb_i[index_c*3+0];
+            rgb_c[1] = rgb_i[index_c*3+1];
+            rgb_c[2] = rgb_i[index_c*3+2];
             
             //関数shadingの中では3点の空間内での座標も必要
             double A[3], B[3], C[3];
-            A[0] = poly.vtx[(poly.idx[i*3+0])*3 + 0];
-            A[1] = poly.vtx[(poly.idx[i*3+0])*3 + 1];
-            A[2] = poly.vtx[(poly.idx[i*3+0])*3 + 2];
+            A[0] = poly.vtx[index_a*3 + 0];
+            A[1] = poly.vtx[index_a*3 + 1];
+            A[2] = poly.vtx[index_a*3 + 2];
             
-            B[0] = poly.vtx[(poly.idx[i*3+1])*3 + 0];
-            B[1] = poly.vtx[(poly.idx[i*3+1])*3 + 1];
-            B[2] = poly.vtx[(poly.idx[i*3+1])*3 + 2];
+            B[0] = poly.vtx[index_b*3 + 0];
+            B[1] = poly.vtx[index_b*3 + 1];
+            B[2] = poly.vtx[index_b*3 + 2];
             
-            C[0] = poly.vtx[(poly.idx[i*3+2])*3 + 0];
-            C[1] = poly.vtx[(poly.idx[i*3+2])*3 + 1];
-            C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2];
+            C[0] = poly.vtx[index_c*3 + 0];
+            C[1] = poly.vtx[index_c*3 + 1];
+            C[2] = poly.vtx[index_c*3 + 2];
             //三角形iのシェーディングを行う
             
-            //三角形iの法線ベクトルは
+            //三角形iの（本来の）法線ベクトルは
             //(poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2])
             double poly_i_n_vec[3]
                 = {poly_n[i*3+0], poly_n[i*3+1], poly_n[i*3+2]};

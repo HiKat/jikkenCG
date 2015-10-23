@@ -192,7 +192,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
             //2パターンの三角形を特定
             if(p[1] == r[1]){
                 //debug
-                printf("\np[1] == r[1]\n");
+                //printf("\np[1] == r[1]\n");
                 //x座標が p <= r となるように調整
                 if(r[0] <  p[0]){
                     double temp[2];
@@ -288,10 +288,11 @@ void shading(double *a, double *b, double *c, double *n, double *A){
             
             if(p[1] == q[1]){
                 //debug
-                printf("\np[1] == q[1]\n");
+                //printf("\np[1] == q[1]\n");
                 //debug
-                printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n"
-                       ,p[0], p[1], q[0], q[1], r[0], r[1]);
+                /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n" */
+                /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
+                
                 //x座標が p < q となるように調整
                 if(q[0] <  p[0]){
                     double temp[2];
@@ -300,8 +301,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                     memcpy(p, temp, sizeof(double) * 2);
                     
                     //debug
-                    printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n"
-                           ,p[0], p[1], q[0], q[1], r[0], r[1]);
+                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
+                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
                     
                 }
                 
@@ -402,8 +403,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
         //分割後の三角形はpp2qとpp2r
         else{
             //debug
-            printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割してシェーディング\n"
-                   ,p[0], p[1], q[0], q[1], r[0], r[1]);
+            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割してシェーディング\n" */
+            /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
             
             double p2[2];
 
@@ -417,13 +418,13 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                 memcpy(p, temp, sizeof(double) * 2);
             }
             //debug
-            printf("\np2[2] = (%f\t%f)\n", p2[0], p2[1]);
-            printf("\n三角形を\n");
-            printf("三角形pp2q = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n",
-                   p[0], p[1], p2[0], p2[1], q[0], q[1]);
-            printf("三角形pp2r = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n",
-                   p[0], p[1], p2[0], p2[1], r[0], r[1]);
-            printf("に分割してシェーディング\n");
+            /* printf("\np2[2] = (%f\t%f)\n", p2[0], p2[1]); */
+            /* printf("\n三角形を\n"); */
+            /* printf("三角形pp2q = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
+            /*        p[0], p[1], p2[0], p2[1], q[0], q[1]); */
+            /* printf("三角形pp2r = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
+            /*        p[0], p[1], p2[0], p2[1], r[0], r[1]); */
+            /* printf("に分割してシェーディング\n"); */
             //分割しても同一平面上なので法線ベクトルと
             //平面上の任意の点は同じものを使える.
             shading(p, p2, q, n, A);
@@ -688,10 +689,13 @@ int main (int argc, char *argv[])
     fp = fopen(argv[1], "r");
     read_one_obj(fp, &poly, &surface);
 
+    printf("\npoly.vtx_num\n");
     fprintf(stderr,"%d vertice are found.\n",poly.vtx_num);
+    printf("\npoly.idx_num\n");
     fprintf(stderr,"%d triangles are found.\n",poly.idx_num);
 
     /* i th vertex */
+    printf("\npoly.vtx[i*3+0, 2, 3]\n");
     for ( i = 0 ; i < poly.vtx_num ; i++ ) {
         fprintf(stdout,"%f %f %f # %d th vertex\n", 
                 poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2],
@@ -699,6 +703,7 @@ int main (int argc, char *argv[])
     }
 
     /* i th triangle */
+    printf("\npoly.idx[i*3+0, 2, 3]\n");
     for ( i = 0 ; i < poly.idx_num ; i++ ) {
         fprintf(stdout,"%d %d %d # %d th triangle\n", 
                 poly.idx[i*3+0], poly.idx[i*3+1], poly.idx[i*3+2],
@@ -805,8 +810,8 @@ int main (int argc, char *argv[])
             c[1] = projected_ver_buf[2][1];
             
             //debug
-            printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nのシェーディングを行います.\n"
-                   ,a[0], a[1], b[0], b[1], c[0], c[1]);
+            /* printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nのシェーディングを行います.\n" */
+            /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
             
 
             //冗長な処理
