@@ -3,9 +3,12 @@
 #include <string.h>
 #include <float.h>
 #include <ctype.h>
+#include <math.h>
 #define MAXOFARRAYSIZE 20000
 #define FILENAME "./sample/data2.txt"/*数値データの入ったファイル名*/
 #define MAX 1024
+
+
 
 typedef void(*ARRAY_FUNC)(long array[],int x,int y);
 //関数ポインタを要素に持つ配列の宣言を簡略化するため
@@ -42,7 +45,8 @@ void print_array(long array[],int arraysize){
 }
 
 
-void show_list(struct list *p)
+//debug
+void show_list(LIST *p)
 {
 	while (p != NULL) { 
 		printf("%3d %d\n", p->num, p->index);
@@ -50,10 +54,9 @@ void show_list(struct list *p)
 	}
 }
 
-
-void free_list(struct list *p)
+void free_list(LIST *p)
 {
-	struct list *p2;
+	LIST *p2;
 
 	while (p != NULL) { 
 		p2 = p->next;
@@ -68,7 +71,7 @@ void free_list(struct list *p)
 //////////////////////////////////////
 int main(void){  
     char *fname = FILENAME;
-    FILE *ip; 
+    FILE *ip;
     ip = fopen(fname,"r");
     if(ip == NULL){ 
         fprintf(stderr, "%sを正常に開くことが出来ませんでした.\n" ,FILENAME);
@@ -76,7 +79,7 @@ int main(void){
     }
     
     else{
-        printf("%sを読み込みます。\n",FILENAME);
+        printf("loading %s...\n",FILENAME);
 
 
         //=============================================================
@@ -116,8 +119,7 @@ int main(void){
         LIST *head, *tail;
         head = NULL;
         tail = NULL;
-        
-        
+  
         int num;
         int index = 0;
 
@@ -156,19 +158,42 @@ int main(void){
             }
             //空白以外のとき（数字のはず）
             else{
-                putchar(num);
-                sprintf(buf, "%d", num);
-                strcat(char_buf, buf);   
+                sprintf(buf, "%c", num);
+                strcat(char_buf, buf);
             }   
         }
-        //=============================================================
-    
-             
+        //=============================================================          
         fclose(ip);
-        printf("%sからの数値の読み込みが完了しました。\n",FILENAME);
-        show_list(head);
+        printf("completed processing %s\n",FILENAME);
+        
+        //debug
+        //show_list(head);
+        
+        //取り込んだppmの保存領域内を確保
+        int input_ppm[ppm_height][ppm_width][3];
+
+
+        
+        //LISTを通常の配列に変換==================================
+        LIST *p = head;
+        //debug
+        printf("input ppm is...\n");
+        while (p->next != NULL) {
+            div_t d1 = div(p->index, 3);
+            div_t d2 = div(d1.quot, ppm_width);
+                
+            input_ppm[d2.quot][d2.rem][d1.rem] = p->num;
+            //debug
+            printf("input_ppm[%d][%d][%d] = %d\n",
+                   d2.quot, d2.rem, d1.rem,
+                   input_ppm[d2.quot][d2.rem][d1.rem]);
+            
+            p = p->next;
+        }
+        //=====================================================
+
+        
         free_list(head);
-        printf("すべての操作が完了しました。\n");
         return 0;
     }
 }
@@ -191,4 +216,6 @@ LIST *add_list(int num, int index, LIST *tail){
     //最後尾はpになる
 	return p;
 }
-//////////////////////////////////
+
+
+
