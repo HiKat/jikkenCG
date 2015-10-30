@@ -4,14 +4,9 @@
 #include <float.h>
 #include <ctype.h>
 #include <math.h>
-#define MAXOFARRAYSIZE 20000
-#define FILENAME "./sample/spheremap1 copy.ppm"
+#define MAP_FILENAME "./sample/spheremap1 copy.ppm"
 #define MAX 1024
 
-
-
-typedef void(*ARRAY_FUNC)(long array[],int x,int y);
-//関数ポインタを要素に持つ配列の宣言を簡略化するため
 
 struct list{
     int num;
@@ -66,16 +61,16 @@ void free_list(LIST *p)
 //////////////////////////////////////
 //////////////////////////////////////
 int main(void){  
-    char *fname = FILENAME;
+    char *map_fname = MAP_FILENAME;
     FILE *ip;
-    ip = fopen(fname,"r");
+    ip = fopen(map_fname,"r");
     if(ip == NULL){ 
-        fprintf(stderr, "%sを正常に開くことが出来ませんでした.\n" ,FILENAME);
+        fprintf(stderr, "%sを正常に開くことが出来ませんでした.\n" ,MAP_FILENAME);
         exit(1);/*異常終了*/
     }
     
     else{
-        printf("loading %s...\n",FILENAME);
+        printf("loading %s...\n",MAP_FILENAME);
 
 
         //=============================================================
@@ -161,7 +156,7 @@ int main(void){
         }
         //=============================================================          
         fclose(ip);
-        printf("completed processing %s\n",FILENAME);
+        printf("completed processing %s\n",MAP_FILENAME);
         
         //debug
         //show_list(head);
