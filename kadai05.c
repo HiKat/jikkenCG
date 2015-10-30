@@ -167,7 +167,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
             //分割できない
 
             //debug
-            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割できないのでこのままシェーディング\n" */
+            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\n
+                       rの座標(%f, %f)\nは分割できないのでこのままシェーディング\n" */
             /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
 
             
@@ -972,6 +973,8 @@ int main (int argc, char *argv[])
     fprintf(stderr, "ambientIntensity %f\n", surface.ambi);
     fprintf(stderr, "shininess %f\n", surface.shine);
 
+
+    
     //===================================================================
     //===================================================================
     //===================================================================

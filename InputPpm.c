@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <math.h>
 #define MAXOFARRAYSIZE 20000
-#define FILENAME "./sample/data2.txt"/*数値データの入ったファイル名*/
+#define FILENAME "./sample/spheremap1 copy.ppm"
 #define MAX 1024
 
 
@@ -21,27 +21,23 @@ struct list{
 
 typedef struct list LIST;
 
+LIST *add_list(int num, int index, LIST *tail){
+	LIST *p;
 
-
-LIST *add_list(int num, int index, LIST *tail);
-
-void print_array(long array[],int arraysize){
-    int i;
-    printf("生成された配列の要素は順に{\n");
-    for (i = 0;i < arraysize;i++){
-        if (i == 0){
-            printf("%4ld ",array[0]);
-        }
-        else {
-            if (i%10){
-                printf("%4ld ",array[i]);
-            }
-            else {	
-                printf("\n%4ld ",array[i]);
-            }
-        }
-    }
-    printf("\n}です。\n");
+	/* 記憶領域の確保 */
+	if ((p = (LIST *) malloc(sizeof(LIST))) == NULL) {
+		printf("malloc error\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	/* リストにデータを登録 */
+	p->num = num;
+	p->index = index;	
+	/* ポインタのつなぎ換え */
+	p->next = NULL;
+	tail->next = p;
+    //最後尾はpになる
+	return p;
 }
 
 
@@ -145,6 +141,7 @@ int main(void){
                     /* リストにデータを登録 */
                     p->num = atoi(char_buf);
                     p->index = index;
+                    
                     /* ポインタのつなぎ換え */
                     p->next = NULL;
                     tail = p;
@@ -176,14 +173,24 @@ int main(void){
         
         //LISTを通常の配列に変換==================================
         LIST *p = head;
+
         //debug
         printf("input ppm is...\n");
+        printf("head->index = %d\ttail->index = %d\n", head->index, tail->index);
+        
+        
         while (p->next != NULL) {
+            //通常の画像viewerはヘッダを見て256*256であれば
+            //それ以降の余分な数値は無視する
+            int max_index = (ppm_height*ppm_width*3)-1;
+            if(max_index < (p->index)){
+                break;
+            }
             div_t d1 = div(p->index, 3);
             div_t d2 = div(d1.quot, ppm_width);
                 
             input_ppm[d2.quot][d2.rem][d1.rem] = p->num;
-            //debug
+
             printf("input_ppm[%d][%d][%d] = %d\n",
                    d2.quot, d2.rem, d1.rem,
                    input_ppm[d2.quot][d2.rem][d1.rem]);
@@ -196,25 +203,6 @@ int main(void){
         free_list(head);
         return 0;
     }
-}
-
-LIST *add_list(int num, int index, LIST *tail){
-	LIST *p;
-
-	/* 記憶領域の確保 */
-	if ((p = (LIST *) malloc(sizeof(LIST))) == NULL) {
-		printf("malloc error\n");
-		exit(EXIT_FAILURE);
-	}
-	
-	/* リストにデータを登録 */
-	p->num = num;
-	p->index = index;	
-	/* ポインタのつなぎ換え */
-	p->next = NULL;
-	tail->next = p;
-    //最後尾はpになる
-	return p;
 }
 
 
