@@ -442,8 +442,14 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                             double m = 2*sqrt(pow(f[0], 2.0)+
                                               pow(f[1], 2.0)+
                                               pow((f[2]+1), 2.0));
-                            int s_x = (int)round(((f[0]/m) + (1/2)) * WIDTH);
-                            int t_y = (int)round(((f[1]/m) + (1/2)) * HEIGHT);
+
+                            
+                            //int s_x = (int)round(((f[0]/m) + (1/2)) * WIDTH);
+                            //int t_y = (int)round(((f[1]/m) + (1/2)) * HEIGHT);
+                            
+                            int s_x = (int)round(((f[0]/m) + 1) * WIDTH);
+                            int t_y = (int)round(((f[1]/m) + 1) * HEIGHT);
+                            
 
                             printf("\n s_x = %d, t_y = %d\n", s_x, t_y);
 
@@ -483,21 +489,27 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                                
                             else{
                                 image[i][j][0] =
-                                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                                    //env_r
+                                    /* (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX) */
+                                    /* + */
+                                    /* (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX) */
+                                    /* + */
+                                    env_r
                                     ;
                                    
                                 image[i][j][1] =
-                                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                                    //env_g
+                                    /* (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX) */
+                                    /* + */
+                                    /* (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX) */
+                                    /* + */
+                                    env_g
                                     ;
                                    
                                 image[i][j][2] =
-                                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                                    //env_b
+                                    /* (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX) */
+                                    /* + */
+                                    /* (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX) */
+                                    /* + */
+                                    env_b
                                     ;
                                    
                                 //zバッファの更新
@@ -733,8 +745,12 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                             double m = 2*sqrt(pow(f[0], 2.0)+
                                               pow(f[1], 2.0)+
                                               pow((f[2]+1), 2.0));
-                            int s_x = (int)round(((f[0]/m) + (1/2)) * WIDTH);
-                            int t_y = (int)round(((f[1]/m) + (1/2)) * HEIGHT);
+                            //int s_x = (int)round(((f[0]/m) + (1/2)) * WIDTH);
+                            //int t_y = (int)round(((f[1]/m) + (1/2)) * HEIGHT);
+
+                            int s_x = (int)round(((f[0]/m) + 1) * WIDTH);
+                            int t_y = (int)round(((f[1]/m) + 1) * HEIGHT);
+                           
 
                             printf("\n s_x = %d, t_y = %d\n", s_x, t_y);
 
@@ -775,21 +791,27 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                             else{
                             
                                 image[i][j][0] =
-                                    (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX)
-                                    + (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX)
-                                    //env_r
+                                    /* (-1 * ip * diffuse_color[0] * light_rgb[0] * MAX) */
+                                    /* + */
+                                    /* (pow(sn, shininess) * specular_color[0] * light_rgb[0] * MAX) */
+                                    /* + */
+                                    env_r
                                     ;
                                 
                                 image[i][j][1] =
-                                    (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX)
-                                    + (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX)
-                                    //env_g
+                                    /* (-1 * ip * diffuse_color[1] * light_rgb[1] * MAX) */
+                                    /* + */
+                                    /* (pow(sn, shininess) * specular_color[1] * light_rgb[1] * MAX) */
+                                    /* + */
+                                    env_g
                                     ;
                                 
                                 image[i][j][2] =
-                                    (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX)
-                                    + (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX)
-                                    //env_b
+                                    /* (-1 * ip * diffuse_color[2] * light_rgb[2] * MAX) */
+                                    /* + */
+                                    /* (pow(sn, shininess) * specular_color[2] * light_rgb[2] * MAX) */
+                                    /* + */
+                                    env_b
                                     ;
 
                                 /* printf("\n描画しました(%f\t%f\t%f)\n" */
