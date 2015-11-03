@@ -248,28 +248,67 @@ kadai01.cのものを大幅変更、拡張.
 
 
 \section{実行例}
-ランダム座標の描画を行った結果が図\ref{fig:random}、
-\begin{figure}[htbp]
+kadai02.cと同一のディレクトリに次のプログラムを置き、
+\lstinputlisting[caption=EvalKadai02.sh,label=EvalKadai02.sh,breaklines=true]{./EvalKadai02.sh}
+さらに同一ディレクトリ内のディレクトリsampleの中に対象とするVRMLファイルを置いて、
+\begin{lstlisting}
+$ sh EvalKadai02.sh
+\end{lstlisting}
+を実行した.
+なお、それぞれ
+\ref{fig:av1}がav1.wrl、
+\ref{fig:av2}がav2.wrl、
+\ref{fig:av3}がav3.wrl、
+\ref{fig:av4}がav4.wrl、
+\ref{fig:head}がhead.wrl、
+\ref{fig:1997}がiiyama1997.wrl
+を出力した結果である.
+
+\begin{figure}[p]
   \begin{center}
-        \includegraphics[clip,scale=0.7]{images/random.eps}
-        \caption{ランダム座標の出力結果}
-        \label{fig:random}
-  \end{center}
-\end{figure}
-コメント内に記載されているav1.wrlの内容を出力した結果が図\ref{fig:av1}、
-\begin{figure}[htbp]
-  \begin{center}
-        \includegraphics[clip,scale=0.7]{images/av1.eps}
+        \includegraphics[clip,scale=0.5]{images/Kadai02ForAv1.eps}
         \caption{av1.wrlの出力結果}
-        \label{fig:av1}
+        \label{av1}
   \end{center}
 \end{figure}
-av2の内容を出力した結果が図\ref{fig:av2}である.
-\begin{figure}[htbp]
+
+\begin{figure}[p]
   \begin{center}
-        \includegraphics[clip,scale=0.7]{images/av2.eps}
+        \includegraphics[clip,scale=0.5]{images/Kadai02ForAv2.eps}
         \caption{av2.wrlの出力結果}
-        \label{fig:av2}
+        \label{av2}
+  \end{center}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+        \includegraphics[clip,scale=0.5]{images/Kadai02ForAv3.eps}
+        \caption{av3.wrlの出力結果}
+         \label{av3}
+  \end{center}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+        \includegraphics[clip,scale=0.5]{images/Kadai02ForAv4.eps}
+        \caption{av4.wrlの出力結果}
+         \label{av4}
+  \end{center}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+        \includegraphics[clip,scale=0.5]{images/Kadai02ForHead.eps}
+        \caption{head.wrlの出力結果}
+         \label{head}
+  \end{center}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+        \includegraphics[clip,scale=0.5]{images/Kadai02ForIiyama1997.eps}
+        \caption{iiyama1997.wrlの出力結果}
+         \label{1997}
   \end{center}
 \end{figure}
 
@@ -292,9 +331,8 @@ av2の内容を出力した結果が図\ref{fig:av2}である.
 
 
 
-
 \section{APPENDIX}
-ベースとしたkadai01.cのプログラムを次に示す.
+ベースとしたkadai01.cのプログラムを付加しておく.
 \lstinputlisting[caption=kadai01.c,label=kadai01.c,breaklines=true]{./kadai01.c}
 
 \end{document}
