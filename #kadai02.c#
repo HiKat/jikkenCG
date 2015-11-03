@@ -3,11 +3,13 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
+#include <ctype.h>
+#include "vrml.h"
+
 
 
 //=====================================================================
 //必要なデータ
-#define FILENAME "image.ppm"
 #define MAGICNUM "P3"
 #define WIDTH 256
 #define WIDTH_STRING "256"
@@ -219,7 +221,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                double z =
                                    FOCUS * ((n[0]*A[0]) + (n[1]*A[1]) + (n[2]*A[2]))
                                    /
-                                   ((n[0]*(j-(MAX/2))) + (n[1]*(i-(MAX/2))) + n[2]*FOCUS);
+                                   ((n[0]*(j-(WIDTH/2))) + (n[1]*(i-(HEIGHT/2))) + n[2]*FOCUS);
                                
                                //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                                if(z_buf[i][j] < z){
@@ -296,7 +298,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             double z =
                                 FOCUS * ((n[0]*A[0]) + (n[1]*A[1]) + (n[2]*A[2]))
                                 /
-                                ((n[0]*(j-(MAX/2))) + (n[1]*(i-(MAX/2))) + n[2]*FOCUS);
+                                ((n[0]*(j-(WIDTH/2))) + (n[1]*(i-(HEIGHT/2))) + n[2]*FOCUS);
                             
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                             if(z_buf[i][j] < z){
@@ -360,13 +362,6 @@ void shading(double *a, double *b, double *c, double *n, double *A){
  * ver1.0 2005/09/27 Masaaki IIYAMA
  *
  */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include "vrml.h"
-
-
 /*
 /////////////////////////////////////////////////////////////////
 */
@@ -639,13 +634,12 @@ int main (int argc, char *argv[])
     //===================================================================
 
     FILE *fp_ppm;
-    char *fname = FILENAME;
-
     
-    fp_ppm = fopen( fname, "w" );
+    fp_ppm = fopen(argv[2], "w" );
+    
     //ファイルが開けなかったとき
     if( fp_ppm == NULL ){
-        printf("%sファイルが開けません.\n", fname);
+        printf("%sファイルが開けません.\n", argv[2]);
         return -1;
     }
   
@@ -788,7 +782,7 @@ int main (int argc, char *argv[])
     fclose(fp_ppm);
     fclose(fp);
     
-    printf("\nppmファイル %s の作成が完了しました.\n", fname );
+    printf("\nppmファイル %s の作成が完了しました.\n", argv[2]);
     return 1;
 }
 

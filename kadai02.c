@@ -3,6 +3,9 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
+#include <ctype.h>
+#include "vrml.h"
+
 
 
 //=====================================================================
@@ -30,13 +33,10 @@ const double light_rgb[3] = {1.0, 1.0, 1.0};
 
 //カメラ位置は原点であるものとして投影を行う.
 //=====================================================================
-
-
 //メモリ内に画像の描画領域を確保
 double image[HEIGHT][WIDTH][3];
 //zバッファ用の領域を確保
 double z_buf[HEIGHT][WIDTH];
-
 //投影された後の2次元平面上の各点の座標を格納する領域
 double projected_ver_buf[3][2];
 
@@ -222,7 +222,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                double z =
                                    FOCUS * ((n[0]*A[0]) + (n[1]*A[1]) + (n[2]*A[2]))
                                    /
-                                   ((n[0]*(j-(MAX/2))) + (n[1]*(i-(MAX/2))) + n[2]*FOCUS);
+                                   ((n[0]*(j-(WIDTH/2))) + (n[1]*(i-(HEIGHT/2))) + n[2]*FOCUS);
                                
                                //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                                if(z_buf[i][j] < z){
@@ -299,7 +299,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             double z =
                                 FOCUS * ((n[0]*A[0]) + (n[1]*A[1]) + (n[2]*A[2]))
                                 /
-                                ((n[0]*(j-(MAX/2))) + (n[1]*(i-(MAX/2))) + n[2]*FOCUS);
+                                ((n[0]*(j-(WIDTH/2))) + (n[1]*(i-(HEIGHT/2))) + n[2]*FOCUS);
                             
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                             if(z_buf[i][j] < z){
@@ -363,13 +363,6 @@ void shading(double *a, double *b, double *c, double *n, double *A){
  * ver1.0 2005/09/27 Masaaki IIYAMA
  *
  */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include "vrml.h"
-
-
 /*
 /////////////////////////////////////////////////////////////////
 */
@@ -645,7 +638,8 @@ int main (int argc, char *argv[])
     char *fname = FILENAME;
 
     
-    fp_ppm = fopen( fname, "w" );
+    fp_ppm = fopen(argv[2], "w" );
+    
     //ファイルが開けなかったとき
     if( fp_ppm == NULL ){
         printf("%sファイルが開けません.\n", fname);
@@ -791,7 +785,7 @@ int main (int argc, char *argv[])
     fclose(fp_ppm);
     fclose(fp);
     
-    printf("\nppmファイル %s の作成が完了しました.\n", fname );
+    printf("\nppmファイル %s の作成が完了しました.\n", argv[2]);
     return 1;
 }
 
