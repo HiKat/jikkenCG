@@ -132,7 +132,6 @@ int main(void){
         int flag = 0;
         //=============================================================
         while (1){
-            printf("loop in \n");
             num = fgetc(ip);
             char reset[] = "";
             //空白判定
