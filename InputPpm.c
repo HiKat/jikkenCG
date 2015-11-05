@@ -4,10 +4,10 @@
 #include <float.h>
 #include <ctype.h>
 #include <math.h>
-//#define MAP_FILENAME "./sample/spheremap1.ppm"
+#define MAP_FILENAME "./sample/spheremap1.ppm"
 //#define MAP_FILENAME "./sample/MapSample.txt"
 //#define MAP_FILENAME "./sample/spheremap2.ppm"
-#define MAP_FILENAME "./Kadai02ForHead.txt"
+//#define MAP_FILENAME "./Kadai02ForHead.txt"
 
 #define MAX 1024
 #define OUTPUTNAME "inputMap.ppm"
@@ -132,13 +132,19 @@ int main(void){
         int flag = 0;
         //=============================================================
         while (1){
+            printf("loop in \n");
             num = fgetc(ip);
             char reset[] = "";
             //空白判定
             //空白のとき
             if(isspace(num) != 0 || num == EOF){
                 //直前に読み込んだ文字が空白のとき
-                if(flag == 1){}
+                if(flag == 1){
+                    /* ループから抜ける */
+                    if(num == EOF){
+                        break;
+                    }
+                }
                 //直前に読み込んだ文字が空白でないとき
                 else{
                     //先頭、最後尾をセット
