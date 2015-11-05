@@ -4,8 +4,15 @@
 #include <float.h>
 #include <ctype.h>
 #include <math.h>
-#define MAP_FILENAME "./sample/spheremap1 copy.ppm"
+//#define MAP_FILENAME "./sample/spheremap1.ppm"
+//#define MAP_FILENAME "./sample/MapSample.txt"
+//#define MAP_FILENAME "./sample/spheremap2.ppm"
+#define MAP_FILENAME "./Kadai02ForHead.txt"
+
 #define MAX 1024
+#define OUTPUTNAME "inputMap.ppm"
+//#define OUTPUTNAME "inputMap.txt"
+
 
 
 struct list{
@@ -27,7 +34,8 @@ LIST *add_list(int num, int index, LIST *tail){
 	
 	/* リストにデータを登録 */
 	p->num = num;
-	p->index = index;	
+	p->index = index;
+    printf("index = %d num = %d\n", p->index, p->num);
 	/* ポインタのつなぎ換え */
 	p->next = NULL;
 	tail->next = p;
@@ -96,10 +104,17 @@ int main(void){
         fgets(buf,70,ip);
         int ppm_width = atoi(strtok(buf, " "));
         printf("width is %d.\n", ppm_width);
+
+
+        //==============================================================================
+        printf("magic number is %s.\n", magic_num);
+        //==============================================================================
+
+        
         int ppm_height = atoi(strtok(NULL, "\n"));
         printf("height is %d.\n", ppm_height);
         //===========================================
-        
+
         //上限値を取得=================================
         fgets(buf,70,ip);
         int ppm_max = atoi(strtok(buf, "\n"));
@@ -113,43 +128,52 @@ int main(void){
   
         int num;
         int index = 0;
-
+        char char_buf[256];
+        int flag = 0;
         //=============================================================
         while (1){
             num = fgetc(ip);
-            if(num == EOF){
-                break;
-            }
-            char char_buf[256];
             char reset[] = "";
             //空白判定
             //空白のとき
-            if(isspace(num) != 0){
-                //先頭、最後尾をセット
-                if(index == 0){
-                    LIST *p;
-                    /* 記憶領域の確保 */
-                    if ((p = (LIST *) malloc(sizeof(LIST))) == NULL) {
-                        printf("malloc error\n");
-                        exit(EXIT_FAILURE);
-                    }
-                    /* リストにデータを登録 */
-                    p->num = atoi(char_buf);
-                    p->index = index;
-                    
-                    /* ポインタのつなぎ換え */
-                    p->next = NULL;
-                    tail = p;
-                    head = p;
-                }
+            if(isspace(num) != 0 || num == EOF){
+                //直前に読み込んだ文字が空白のとき
+                if(flag == 1){}
+                //直前に読み込んだ文字が空白でないとき
                 else{
+                    //先頭、最後尾をセット
+                    if(index == 0){
+                        LIST *p;
+                        /* 記憶領域の確保 */
+                        if ((p = (LIST *) malloc(sizeof(LIST))) == NULL) {
+                            printf("malloc error\n");
+                            exit(EXIT_FAILURE);
+                        }
+                        /* リストにデータを登録 */
+                        p->num = atoi(char_buf);
+                        p->index = index;
+                        printf("index = %d num = %d\n", p->index, p->num);
+                        
+                        /* ポインタのつなぎ換え */
+                        p->next = NULL;
+                        tail = p;
+                        head = p;
+                        /* ループから抜ける */
+                        if(num == EOF){
+                            break;
+                        }
+                    }
+                    else{
                     tail = add_list(atoi(char_buf), index, tail);
+                    }
+                    index ++;
+                    memcpy(char_buf, reset, sizeof(char) * 256);
+                    flag = 1;
                 }
-                index ++;
-                memcpy(char_buf, reset, sizeof(char) * 256);
             }
             //空白以外のとき（数字のはず）
             else{
+                flag = 0;
                 sprintf(buf, "%c", num);
                 strcat(char_buf, buf);
             }   
@@ -172,12 +196,11 @@ int main(void){
         //debug
         printf("input ppm is...\n");
         printf("head->index = %d\ttail->index = %d\n", head->index, tail->index);
-        
-        
+
+        int max_index = (ppm_height*ppm_width*3)-1;
         while (p->next != NULL) {
             //通常の画像viewerはヘッダを見て256*256であれば
             //それ以降の余分な数値は無視する
-            int max_index = (ppm_height*ppm_width*3)-1;
             if(max_index < (p->index)){
                 break;
             }
@@ -185,17 +208,66 @@ int main(void){
             div_t d2 = div(d1.quot, ppm_width);
                 
             input_ppm[d2.quot][d2.rem][d1.rem] = p->num;
-
-            printf("input_ppm[%d][%d][%d] = %d\n",
-                   d2.quot, d2.rem, d1.rem,
-                   input_ppm[d2.quot][d2.rem][d1.rem]);
+            /* rintf("input_ppm[%d][%d][%d] = %d\n", */
+            /*       d2.quot, d2.rem, d1.rem, */
+            /*       input_ppm[d2.quot][d2.rem][d1.rem]); */
             
             p = p->next;
         }
+        div_t d3 = div(max_index, 3);
+        div_t d4 = div(d3.quot, ppm_width);
+        input_ppm[d4.quot][d4.rem][d3.rem] = p->num;
+        
+        /* printf("input_ppm[%d][%d][%d] = %d\n", */
+        /*        d4.quot, d4.rem, d3.rem, */
+        /*        input_ppm[d4.quot][d4.rem][d3.rem]); */
+        
         //=====================================================
 
         
         free_list(head);
+
+        //=====================================================
+        FILE *out_ppm;
+        char *out_fname = OUTPUTNAME;
+        out_ppm = fopen( out_fname, "w" );
+        //ファイルが開けなかったとき
+        if( out_ppm == NULL ){
+            printf("%sファイルが開けません.\n", out_fname);
+            return -1;
+        }
+        
+        //出力
+        else{
+            //ヘッダ出力=========================================
+            //printf("magic number is %s.\n", magic_num);
+            char str[1024];
+            /* sprintf(str, "%s\n", magic_num); */
+            /* fputs(str, out_ppm); */
+            
+            fputs("P3\n", out_ppm);
+            sprintf(str, "%d\t%d\n", ppm_width, ppm_height);
+            fputs(str, out_ppm);
+            sprintf(str, "%d\n", ppm_max);
+            fputs(str, out_ppm);
+            //==================================================
+
+            //輝度値出力=========================================
+            for(int i = 0; i < ppm_height; i++){
+                for(int j = 0; j < ppm_width; j++){
+                    char r[256];
+                    char g[256];
+                    char b[256];
+                    sprintf(r, "%d", (int)round(input_ppm[i][j][0]));
+                    sprintf(g, "%d", (int)round(input_ppm[i][j][1]));
+                    sprintf(b, "%d", (int)round(input_ppm[i][j][2]));
+                    sprintf(str, "%s\t%s\t%s\n", r, g, b);
+                    fputs(str, out_ppm); 
+                }
+            }
+            fclose(out_ppm);
+        }
+        //=====================================================
         return 0;
     }
 }

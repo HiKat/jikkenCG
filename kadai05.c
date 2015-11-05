@@ -303,6 +303,16 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                             u[1] = (u[1] / length_u);
                             u[2] = (u[2] / length_u);
 
+                            /* u[0] = 0; */
+                            /* u[1] = 0; */
+                            /* u[2] = -1; */
+
+                            /* double n_[3]; */
+                            /* double length_fu = sqrt(pow(f[0]+u[0], 2.0)+pow(f[1]+u[1], 2.0)+pow(f[2]+u[2], 2.0)); */
+                            /* n_[0] = (f[0]+u[0])/length_fu; */
+                            /* n_[1] = (f[1]+u[1])/length_fu; */
+                            /* n_[2] = (f[2]+u[2])/length_fu; */
+
                             //法線ベクトルと視線ベクトルの内積
                             double nu = (n[0]*u[0])+(n[1]*u[1])+(n[2]*u[2]);
 
@@ -316,20 +326,17 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                                      pow(f[2], 2.0));                  
                             f[0] = (f[0] / length_f);
                             f[1] = (f[1] / length_f);
-                            f[2] = (f[2] / length_f);
+                            f[2] = -1*(f[2] / length_f);
 
                             //========================================================
 
                             //Sphere mapとの対応=======================================
-                            /* double m = sqrt(pow(f[0], 2.0)+  */
-                            /*                 pow(f[1], 2.0)+  */
-                            /*                 pow((f[2] + 1), 2.0)); */
-
-                            /* int s_x = (int)round(((f[1]/m)) * WIDTH); */
-                            /* int t_y = (int)round(((f[0]/m)) * HEIGHT); */
+                            double m = 2*sqrt(pow(f[0], 2.0)+
+                                            pow(f[1], 2.0)+
+                                            pow((f[2] - 1), 2.0));
                             
-                            int s_x = (int)round((1/2+(f[1]/2)) * WIDTH);
-                            int t_y = (int)round((1/2-(f[0]/2)) * HEIGHT);
+                            int s_x = (int)round((0.5 + (f[0]/m)) * ppm_width);
+                            int t_y = (int)round((0.5 - (f[1]/m)) * ppm_height);
 
                                
                             //環境マップから対応する画素値を取り出す
@@ -351,19 +358,6 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                                 env_g = input_ppm[t_y][s_x][1];
                                 env_b = input_ppm[t_y][s_x][2];
                             }
-
-                            //debug
-                            //printf("%d %d !!!\n", ppm_width, ppm_height);
-                               
-                               
-                            //========================================================
-
-                               
-
-                            //======================================================================================
-                            //======================================================================================
-                               
- 
                                
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
                             if(z_buf[i][j] < p_or[2]){}
@@ -382,6 +376,9 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                                 if(debug == 1){
                                 printf("at 2100");
                                 printf("\n s_x = %d, t_y = %d\n", s_x, t_y);
+                                printf("%f %f\n",((0.5 + (f[1]/2)) * ppm_width), ((0.5 - (f[0]/2)) * ppm_height));
+
+                                //exit(0);
                                 }
                             }
                         }
@@ -494,15 +491,15 @@ void shading(double *a, double *b, double *c, double *n, double *A, int input_pp
                                      pow(f[2], 2.0));
                             f[0] = (f[0] / length_f);
                             f[1] = (f[1] / length_f);
-                            f[2] = (f[2] / length_f);
+                            f[2] = -1*(f[2] / length_f);
                             //Sphere mapとの対応=======================================
-                            double m = sqrt(pow(f[0], 2.0)+
-                                            pow(f[1], 2.0)+
-                                            pow((f[2]-1), 2.0));
+                            double m = 2*sqrt(pow(f[0], 2.0)+
+                                              pow(f[1], 2.0)+
+                                              pow((f[2] - 1), 2.0));
                            
 
-                            int s_x = (int)round(((f[1]/m))* WIDTH);
-                            int t_y = (int)round(((f[0]/m)) * HEIGHT);
+                            int s_x = (int)round((0.5 + (f[0]/m)) * ppm_width);
+                            int t_y = (int)round((0.5 - (f[1]/m)) * ppm_height);
 
                                
                             //環境マップから対応する画素値を取り出す
