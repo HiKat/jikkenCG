@@ -16,7 +16,6 @@
 #define MAX 255
 #define MAX_STRING "255"
 #define FOCUS 256.0
-#define Z_BUF_MAX
 #define ENV_LIGHT 1.0
 
 //diffuseColorを格納する配列
@@ -25,16 +24,12 @@ double diffuse_color[3];
 double shininess;
 //specularColorを格納する変数
 double specular_color[3];
-
 //光源モデルは平行光源
-
 //光源方向
 const double light_dir[3] = {-1.0, -1.0, 2.0};
 //光源明るさ
 const double light_rgb[3] = {1.0, 1.0, 1.0};
-
 //カメラ位置は原点であるものとして投影を行う.
-
 //=====================================================================
 
 
@@ -42,11 +37,38 @@ const double light_rgb[3] = {1.0, 1.0, 1.0};
 double image[HEIGHT][WIDTH][3];
 //zバッファ用の領域を確保
 double z_buf[HEIGHT][WIDTH];
-
 //投影された後の2次元平面上の各点の座標を格納する領域
 //double projected_ver[VER_NUM][2];
 double projected_ver_buf[3][2];
+//環境マップを格納するリストの構造体の定義
+struct list{
+    int num;
+    int index;
+    struct list *next;
+}list;
+typedef struct list LIST;
 
+//環境マッピング用の画像の縦横幅、上限値
+int ppm_width, ppm_height, ppm_max;
+
+LIST *add_list(int num, int index, LIST *tail){
+	LIST *p;
+
+	/* 記憶領域の確保 */
+	if ((p = (LIST *) malloc(sizeof(LIST))) == NULL) {
+		printf("malloc error\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	/* リストにデータを登録 */
+	p->num = num;
+	p->index = index;	
+	/* ポインタのつなぎ換え */
+	p->next = NULL;
+	tail->next = p;
+    //最後尾はpになる
+	return p;
+}
 
 //2点p、qを結ぶ直線上のy座標がyであるような点のx座標を返す関数
 //eg)
