@@ -25,7 +25,6 @@
 double diffuse_color[3];
 
 //光源モデルは平行光源
-
 //光源方向
 const double light_dir[3] = {-1.0, -1.0, 2.0};
 //光源明るさ
@@ -181,9 +180,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                     double temp[2];
                     memcpy(temp, r, sizeof(double) * 2);
                     memcpy(r, p, sizeof(double) * 2);
-                    memcpy(p, temp, sizeof(double) * 2);
-                    
-                    
+                    memcpy(p, temp, sizeof(double) * 2);                
                 }
                 
                 //debug
@@ -225,16 +222,12 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                    ((n[0]*(j-(WIDTH/2))) + (n[1]*(i-(HEIGHT/2))) + n[2]*FOCUS);
                                
                                //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
-                               if(z_buf[i][j] < z){
-                                   //描画しない
-
-                               }
+                               if(z_buf[i][j] < z){}
                                
                                else{
                                    image[i][j][0] =
                                        -1 * ip * diffuse_color[0] *
-                                       light_rgb[0] * MAX;
-                                   
+                                       light_rgb[0] * MAX;                                 
                                    image[i][j][1] =
                                        -1 * ip * diffuse_color[1] *
                                        light_rgb[1] * MAX;
@@ -249,8 +242,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                     }
                     //はみ出ている場合は描画しない
                     else{}
-                }
-                
+                }                
             }
             
             if(p[1] == q[1]){
@@ -302,9 +294,7 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                                 ((n[0]*(j-(WIDTH/2))) + (n[1]*(i-(HEIGHT/2))) + n[2]*FOCUS);
                             
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
-                            if(z_buf[i][j] < z){
-                                //描画しない
-                            }
+                            if(z_buf[i][j] < z){}
                         
                             else{                   
                                 image[i][j][0] =
@@ -331,10 +321,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
         //分割できる
         //分割してそれぞれ再帰的に処理
         //分割後の三角形はpp2qとpp2r
-        else{
-            
+        else{           
             double p2[2];
-
             p2[0] = func1(q, r, p[1]);
             p2[1] = p[1];
             //p2のほうがpのx座標より大きくなるようにする
@@ -353,19 +341,8 @@ void shading(double *a, double *b, double *c, double *n, double *A){
     }
 }
 
-
-
-
-
-/* VRML 2.0 Reader 
- *
- * ver1.1 2005/10/06 Masaaki IIYAMA (bug fix)
- * ver1.0 2005/09/27 Masaaki IIYAMA
- *
- */
-/*
-/////////////////////////////////////////////////////////////////
-*/
+/* VRMLの読み込み */
+/* ======================================================================= */
 #define MWS 256
 
 static int strindex( char *s, char *t)
@@ -590,10 +567,10 @@ int read_one_obj(
 
     return 1;
 }		 
+/* ======================================================================= */
 
-
-int main (int argc, char *argv[])
-{
+int main (int argc, char *argv[]){
+    /* VRML読み込み========================================================= */
     int i;
     FILE *fp;
     Polygon poly;
@@ -628,16 +605,10 @@ int main (int argc, char *argv[])
     fprintf(stderr, "specularColor %f %f %f\n", surface.spec[0], surface.spec[1], surface.spec[2]);
     fprintf(stderr, "ambientIntensity %f\n", surface.ambi);
     fprintf(stderr, "shininess %f\n", surface.shine);
-
-    //===================================================================
-    //===================================================================
-    //===================================================================
-    //===================================================================
+    /* VRML読み込みここまで========================================================= */
 
     FILE *fp_ppm;
     char *fname = FILENAME;
-
-    
     fp_ppm = fopen(argv[2], "w" );
     
     //ファイルが開けなかったとき
@@ -650,7 +621,6 @@ int main (int argc, char *argv[])
     else{
         fprintf(stderr, "\n初期の頂点座標は以下\n");
         for(int i = 0; i < poly.vtx_num; i++){
-            //fprintf(stderr, "%f\t%f\t%f\n", ver[i][0], ver[i][1], ver[i][2]);
             fprintf(stderr, "%f\t%f\t%f\n", poly.vtx[i*3+0], poly.vtx[i*3+1], poly.vtx[i*3+2]);
         }
         fprintf(stderr, "\n");
@@ -752,9 +722,7 @@ int main (int argc, char *argv[])
             shading(a, b, c, n, A);
         }
 
-
-        
-     
+   
         //ヘッダー出力
         fputs(MAGICNUM, fp_ppm);
         fputs("\n", fp_ppm);
@@ -785,7 +753,7 @@ int main (int argc, char *argv[])
     fclose(fp_ppm);
     fclose(fp);
     
-    printf("\nppmファイル %s の作成が完了しました.\n", argv[2]);
+    printf("\nppmファイル %s に画像を出力しました.\n", argv[2]);
     return 1;
 }
 

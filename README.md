@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
     double poly_i_n_vec[3];
     三角形iの法線ベクトルをpoly_i_n_vecに格納;
 
-    shading(a, b, c, n_a, n_b, n_c, A, B, C);
+    shading(a, b, c, n_a, n_b, n_c, A, B, C,  poly_i_n_vec);
 
   }
   ファイルクローズ;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
 }
 
 
-void shading(double *a, double *b, double *c, double *n_a, double *n_b, double *n_c, double *A, double *B, double *C){
+void shading(double *a, double *b, double *c, double *n_a, double *n_b, double *n_c, double *A, double *B, double *C, int input_ppm[ppm_height][ppm_width][3]){
 
   //パターン1のシェーディング
   for(点(j, i)をシェーディング){
