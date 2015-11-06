@@ -10,9 +10,6 @@ PPM2=Kadai02ForAv2.ppm
 WRL3=sample/av3.wrl
 PPM3=Kadai02ForAv3.ppm
 
-WRL4=sample/av4.wrl
-PPM4=Kadai02ForAv4.ppm
-
 WRLhead=sample/head.wrl
 PPMhead=Kadai02ForHead.ppm
 

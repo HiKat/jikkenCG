@@ -10,7 +10,6 @@
 
 //=====================================================================
 //必要なデータ
-#define FILENAME "image.ppm"
 #define MAGICNUM "P3"
 #define WIDTH 256
 #define WIDTH_STRING "256"
@@ -608,8 +607,8 @@ int main (int argc, char *argv[]){
     /* VRML読み込みここまで========================================================= */
 
     FILE *fp_ppm;
-    char *fname = FILENAME;
-    fp_ppm = fopen(argv[2], "w" );
+    char *fname = argv[2];
+    fp_ppm = fopen(argv[2], "w");
     
     //ファイルが開けなかったとき
     if( fp_ppm == NULL ){
