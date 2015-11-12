@@ -38,8 +38,6 @@ const double light_rgb[3] = {1.0, 1.0, 1.0};
 double image[HEIGHT][WIDTH][3];
 //zバッファ用の領域を確保
 double z_buf[HEIGHT][WIDTH];
-//投影された後の2次元平面上の各点の座標を格納する領域
-double projected_ver_buf[3][2];
 
 
 //2点p、qを結ぶ直線上のy座標がyであるような点のx座標を返す関数
@@ -813,6 +811,9 @@ int main (int argc, char *argv[]){
         specular_color[0] = surface.spec[0];
         specular_color[1] = surface.spec[1];
         specular_color[2] = surface.spec[2];
+
+        //投影された後の2次元平面上の各点の座標を格納する領域
+        double projected_ver_buf[3][2];
 
         //シェーディング
         //三角形ごとのループ
