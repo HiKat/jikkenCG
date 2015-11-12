@@ -7,7 +7,6 @@
 
 //=====================================================================
 //必要なデータ
-#define FILENAME "image-head-01.ppm"
 #define MAGICNUM "P3"
 #define WIDTH 256
 #define WIDTH_STRING "256"
@@ -32,9 +31,8 @@ double specular_color[3];
 const double light_dir[3] = {-1.0, -1.0, 2.0};
 //光源明るさ
 const double light_rgb[3] = {1.0, 1.0, 1.0};
-
 //カメラ位置
-const double camera_xyz[3] = {50.0, 0.0, 0.0};
+double camera_xyz[3];
 //=====================================================================
 
 
@@ -959,10 +957,10 @@ int main (int argc, char *argv[])
     //===================================================================
 
     FILE *fp_ppm;
-    char *fname = FILENAME;
+    char *fname = argv[2];
 
     
-    fp_ppm = fopen( fname, "w" );
+    fp_ppm = fopen(fname, "w" );
     //ファイルが開けなかったとき
     if( fp_ppm == NULL ){
         printf("%sファイルが開けません.\n", fname);
@@ -1008,6 +1006,12 @@ int main (int argc, char *argv[])
         specular_color[0] = surface.spec[0];
         specular_color[1] = surface.spec[1];
         specular_color[2] = surface.spec[2];
+
+        //カメラ位置の取り込み
+        camera_xyz[0] = atoi(argv[3]);
+        camera_xyz[1] = 0.0;
+        camera_xyz[2] = 0.0;
+        printf("camera is at (%f, %f, %f)\n", camera_xyz[0], camera_xyz[1], camera_xyz[2]);
 
         //各頂点の法線ベクトルを求める
         //三角形iの法線ベクトルを求めて配列に格納する（グローバル領域に保存）

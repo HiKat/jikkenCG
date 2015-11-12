@@ -3,11 +3,14 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
+#include <ctype.h>
+#include "vrml.h"
+
+
 
 
 //=====================================================================
 //必要なデータ
-#define FILENAME "image.ppm"
 #define MAGICNUM "P3"
 #define WIDTH 256
 #define WIDTH_STRING "256"
@@ -100,14 +103,7 @@ void shading(double *a, double *b, double *c,
              double *A, double *B, double *C, 
              double *poly_i_n_vec){
     //3点が1直線上に並んでいるときはシェーディングができない
-    if(lineOrNot(a, b, c) == 1){
-        //塗りつぶす点が無いので何もしない.
-        
-        //debug
-        /* printf("\n3点\naの座標(%f,\t%f)\nbの座標(%f,\t%f)\ncの座標(%f,\t%f)\nは一直線上の3点です\n" */
-        /*        ,a[0], a[1], b[0], b[1], c[0], c[1]); */
-        
-    }
+    if(lineOrNot(a, b, c) == 1){}
     else{
         //y座標の値が真ん中点をp、その他の点をq、rとする
         //y座標の大きさはr <= p <= qの順
@@ -211,20 +207,10 @@ void shading(double *a, double *b, double *c,
                     }
                 }
             }
-        }
-
-        //debug
-        /* printf("\n3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-        /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-        
+        }        
         //分割可能な三角形かを判定
         if(p[1] == r[1] || p[1] == q[1]){
             //分割できない
-
-            //debug
-            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割できないのでこのままシェーディング\n" */
-            /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-
             
             //長さが1の光源方向ベクトルを作成する
             //光源方向ベクトルの長さ
@@ -254,11 +240,6 @@ void shading(double *a, double *b, double *c,
                     memcpy(temp_rgb, rgb_r, sizeof(double) * 3);
                     memcpy(rgb_r, rgb_p, sizeof(double) * 3);
                     memcpy(rgb_p, temp_rgb, sizeof(double) * 3);
-                    
-                    //debug
-                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-                    
                 }
                 
                 //debug
@@ -331,8 +312,7 @@ void shading(double *a, double *b, double *c,
                                j++){
                                
       
-                               //======================================================================================
-                               //======================================================================================
+                               //===========================================
                                //p[1] == r[1]
                                //描画する点の空間内でのz座標を計算
                                //計算時の法線ベクトルは
@@ -351,12 +331,7 @@ void shading(double *a, double *b, double *c,
 
                                
                                //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
-                               if(z_buf[i][j] < p_z){
-                                   //debug
-                                   //printf("\n描画されない点です at 1958\n");
-                                   //printf("\np_or[2] = %f\n", p_or[2]);
-                                   //exit(0);
-                               }
+                               if(z_buf[i][j] < p_z){}
 
                                //Type 1
                                else{
@@ -400,18 +375,7 @@ void shading(double *a, double *b, double *c,
                                         );
                                    
                                    //zバッファの更新
-                                   //debug
-                                   //printf("\nzバッファを更新しました.\n");
                                    z_buf[i][j] = p_z;
-                                   //debug
-                                   //printf("\nDBL_MAX = %f\n", DBL_MAX); 
-                                   //printf("\nz_buf => %f\n", z_buf[i][j]);
-                                   /* if(z_buf[i][j] < 398 || 505 < z_buf[i][j]){ */
-                                   /*     printf("\nzバッファの値が不正です 1405\n"); */
-                                   /*     printf("\nz_buf => %f\n", z_buf[i][j]); */
-                                   /*     perror(NULL); */
-                                   /*     exit(0); */
-                                   /* } */
                                }
                            }
                     }
@@ -422,11 +386,6 @@ void shading(double *a, double *b, double *c,
             }
             
             if(p[1] == q[1]){
-                //debug
-                //printf("\np[1] == q[1]\n");
-                //debug
-                /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n" */
-                /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
                 //x座標が p < q となるように調整
                 if(q[0] <  p[0]){
                     double temp[2];
@@ -437,12 +396,7 @@ void shading(double *a, double *b, double *c,
 
                     memcpy(temp_rgb, rgb_q, sizeof(double) * 3);
                     memcpy(rgb_q, rgb_p, sizeof(double) * 3);
-                    memcpy(rgb_p, temp_rgb, sizeof(double) * 3);
-                    
-                    //debug
-                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-                    
+                    memcpy(rgb_p, temp_rgb, sizeof(double) * 3);  
                 }
                 
                 //debug
@@ -495,14 +449,6 @@ void shading(double *a, double *b, double *c,
                 
                 int i;
                 i = ceil(r[1]);
-                //debug
-                /* printf("\ni = %d\n", i); */
-                /* printf("\nr[1] = %f\n", r[1]); */
-                /* printf("\np[1] = %f\n", p[1]); */
-                //debug
-                /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n" */
-                /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-            
                 for(i;
                     r[1] <= i && i <= p[1];
                     i++){
@@ -515,16 +461,12 @@ void shading(double *a, double *b, double *c,
                         
                         int j;
                         j = ceil(x1);
-                        
-                        //debug
-                        //printf("\nj = %d\nx1 = %f\nx2 = %f\ni = %d\n",j ,x1, x2, i);
-                        
+
                         for(j;
                             x1 <= j && j <= x2 && 0 <= j && j <= (WIDTH - 1);
                             j++){
                             
-                            //======================================================================================
-                            //======================================================================================
+                            //=============================================================
                             double p_z =
                                 FOCUS
                                 *
@@ -536,22 +478,10 @@ void shading(double *a, double *b, double *c,
                                  (poly_i_n_vec[1]*(i-(MAX/2))) +
                                  poly_i_n_vec[2]*FOCUS);
 
-                            //printf("\np_z = %f\n", p_z);
-                            
                             //zがzバッファの該当する値より大きければ描画を行わない（何もしない）
-                            if(z_buf[i][j] < p_z){
-                                //debug
-                                /* printf("\n描画されない点です at 1614\n"); */
-                                /* printf("\np_z = %f\n", p_z); */
-                                //exit(0);
-                                
-                            }
+                            if(z_buf[i][j] < p_z){}
                         
                             else{
-
-                                //debug
-                                //printf("\ncheck! 1258\n");
-
                                 //Type 2                         
                                 image[i][j][0] =
                                     (
@@ -591,22 +521,8 @@ void shading(double *a, double *b, double *c,
                                      *
                                      ((rgb_r[2]*(q[1]-i) + rgb_q[2]*(i-r[1])) / (q[1]-r[1]))
                                      );
-                                
-                                /* printf("\n描画しました(%f\t%f\t%f)\n" */
-                                /*        , image[i][j][0], image[i][j][1], image[i][j][2]); */
-                                
                                 //zバッファの更新
-                                //debug
-                                //printf("\nzバッファを更新しました.\n");
                                 z_buf[i][j] = p_z;
-                                //debug
-                                /* printf("\nz_buf => %f\n", z_buf[i][j]); */
-                                /* if(z_buf[i][j] < 400 || 500 < z_buf[i][j]){ */
-                                /*     printf("\nzバッファの値が不正です\n"); */
-                                /*     printf("\nz_buf => %f\n", z_buf[i][j]); */
-                                /*     perror(NULL); */
-                                /*     exit(0); */
-                                /* } */
                             }
                         }
                     }
@@ -620,10 +536,6 @@ void shading(double *a, double *b, double *c,
         //分割してそれぞれ再帰的に処理
         //分割後の三角形はpp2qとpp2r
         else{
-            //debug
-            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割してシェーディング\n" */
-            /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-            
             double p2[2];
 
             p2[0] = func1(q, r, p[1]);
@@ -688,19 +600,8 @@ void shading(double *a, double *b, double *c,
                 memcpy(rgb_p2, rgb_p, sizeof(double) * 2);
                 memcpy(rgb_p, temp_rgb, sizeof(double) * 2);
             }
-            //debug
-            /* printf("\np2[2] = (%f\t%f)\n", p2[0], p2[1]); */
-            /* printf("\n三角形を\n"); */
-            /* printf("三角形pp2q = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
-            /*        p[0], p[1], p2[0], p2[1], q[0], q[1]); */
-            /* printf("三角形pp2r = \n(%f\t%f),\n(%f\t%f),\n(%f\t%f)\n", */
-            /*        p[0], p[1], p2[0], p2[1], r[0], r[1]); */
-            /* printf("に分割してシェーディング\n"); */
             //分割しても同一平面上なので法線ベクトルと
             //平面上の任意の点は同じものを使える.
-
-            //shading(a, b, c, rgb_a, rgb_b, rgb_c, A, B, C, poly_i_n_vec);
-
             //求める必要があるのはrgb_p2とP2
             
             shading(p, p2, q, rgb_p, rgb_p2, rgb_q, P, P2, Q, poly_i_n_vec);
@@ -708,23 +609,6 @@ void shading(double *a, double *b, double *c,
         }
     }
 }
-
-
-
-
-
-/* VRML 2.0 Reader 
- *
- * ver1.1 2005/10/06 Masaaki IIYAMA (bug fix)
- * ver1.0 2005/09/27 Masaaki IIYAMA
- *
- */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include "vrml.h"
-
 
 /*
 /////////////////////////////////////////////////////////////////
@@ -991,12 +875,9 @@ int main (int argc, char *argv[])
     fprintf(stderr, "shininess %f\n", surface.shine);
 
     //===================================================================
-    //===================================================================
-    //===================================================================
-    //===================================================================
 
     FILE *fp_ppm;
-    char *fname = FILENAME;
+    char *fname = argv[2];
 
     
     fp_ppm = fopen( fname, "w" );
@@ -1068,12 +949,6 @@ int main (int argc, char *argv[])
             C[0] = poly.vtx[(poly.idx[i*3+2])*3 + 0];
             C[1] = poly.vtx[(poly.idx[i*3+2])*3 + 1];
             C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2];
-
-            //debug
-            /* printf("\n三角形%dの3点の座標は\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\nです\n", i , */
-            /*        A[0], A[1], A[2], */
-            /*        B[0], B[1], B[2], */
-            /*        C[0], C[1], C[2]); */
             
             //ベクトルAB, ACから外積を計算して
             //法線ベクトルnを求める
@@ -1255,8 +1130,6 @@ int main (int argc, char *argv[])
             
             if(0 <= ip){
                 ip = 0;
-                //printf("\ndebug at 1550\n");
-                //exit(0);
             }
 
             //内積sn
@@ -1265,10 +1138,7 @@ int main (int argc, char *argv[])
                    (s[1] * poly_ave_i[i*3+1]) +
                    (s[2] * poly_ave_i[i*3+2]));
             if(sn <= 0){
-                //debug
-                //printf("\ndebug at 1606\n");
                 sn = 0;
-                //exit(0);
             }
 
             //頂点iの輝度値を計算
@@ -1309,8 +1179,7 @@ int main (int argc, char *argv[])
         
                                 
         //シェーディング
-        //ポリゴンiをシェーディング=======================================================================
-        //============================================================================================
+        //ポリゴンiをシェーディング================================================
         
         for(int i = 0; i < poly.idx_num; i++){
             //三角形の各点の透視投影処理===========================================

@@ -1,11 +1,9 @@
 #!/bin/sh
 SRC=kadai04.c
-#WRL=sample/head.wrl
+WRL=sample/av5.wrl
+PPM=Kadai04ForAv5.ppm
 
-echo start!!
-echo Enter source VRML file!
-read WRL
 gcc -Wall $SRC
-./a.out sample/$WRL.wrl
-open image.ppm
+./a.out $WRL $PPM
+open $PPM
 echo completed!! "\xF0\x9f\x8d\xbb"
