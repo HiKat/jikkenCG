@@ -7,7 +7,6 @@
 
 //=====================================================================
 //必要なデータ
-#define FILENAME "image.ppm"
 #define MAGICNUM "P3"
 #define WIDTH 256
 #define WIDTH_STRING "256"
@@ -30,7 +29,8 @@ double specular_color[3];
 const double light_dir[3] = {-1.0, -1.0, 2.0};
 //光源明るさ
 const double light_rgb[3] = {1.0, 1.0, 1.0};
-//カメラ位置は原点であるものとして投影を行う.
+//カメラ位置
+double camera_xyz[3];
 //=====================================================================
 //メモリ内に画像の描画領域を確保
 double image[HEIGHT][WIDTH][3];
@@ -87,8 +87,6 @@ double func1(double *p, double *q, double y){
         perror(NULL);
         return -1;
     }
-    //printf("check x = %f\n", x);
-    //printf("check p[0] = %f\n", p[0]);
     return x;
 }
 
@@ -228,20 +226,10 @@ void shading(double *a, double *b, double *c,
                 }
             }
         }
-
-        //debug
-        /* printf("\n3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-        /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-        
         //分割可能な三角形かを判定
         if(p[1] == r[1] || p[1] == q[1]){
             //分割できない
 
-            //debug
-            /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\nは分割できないのでこのままシェーディング\n" */
-            /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-
-            
             //長さが1の光源方向ベクトルを作成する
             //光源方向ベクトルの長さ
             double length_l =
@@ -269,12 +257,7 @@ void shading(double *a, double *b, double *c,
 
                     memcpy(temp_n, n_r, sizeof(double) * 3);
                     memcpy(n_r, n_p, sizeof(double) * 3);
-                    memcpy(n_p, temp_n, sizeof(double) * 3);
-                    
-                    //debug
-                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-                    
+                    memcpy(n_p, temp_n, sizeof(double) * 3);                   
                 }
                 
                 //debug
@@ -315,39 +298,19 @@ void shading(double *a, double *b, double *c,
 
 
                                /* 点(j, i)の空間座標を求める. */
-                               double p_or[3];                           
-                               p_or[0] =
-                                   (j-(WIDTH/2))
-                                   *
-                                   ((poly_i_n_vec[0]*A[0]) +
-                                    (poly_i_n_vec[1]*A[1]) +
-                                    (poly_i_n_vec[2]*A[2]))
+                               double p_or[3];
+                               double k =
+                                   ((poly_i_n_vec[0] * (A[0] - camera_xyz[0])) +
+                                    (poly_i_n_vec[1] * (A[1] - camera_xyz[1])) +
+                                    (poly_i_n_vec[2] * (A[2] - camera_xyz[2])))
                                    /
-                                   ((poly_i_n_vec[0]*(j-(WIDTH/2))) +
-                                    (poly_i_n_vec[1]*(i-(HEIGHT/2))) +
-                                    (poly_i_n_vec[2]*FOCUS));
+                                   ((poly_i_n_vec[0] * ((j-(WIDTH/2)) - camera_xyz[0])) +
+                                    (poly_i_n_vec[1] * ((i-(HEIGHT/2)) - camera_xyz[1])) +
+                                    (poly_i_n_vec[2] * (FOCUS - camera_xyz[2])));
                                
-                               p_or[1] =
-                                   (i-(HEIGHT/2))
-                                   *
-                                   ((poly_i_n_vec[0]*A[0]) +
-                                    (poly_i_n_vec[1]*A[1]) +
-                                    (poly_i_n_vec[2]*A[2]))
-                                   /
-                                   ((poly_i_n_vec[0]*(j-(WIDTH/2))) +
-                                    (poly_i_n_vec[1]*(i-(HEIGHT/2))) +
-                                    (poly_i_n_vec[2]*FOCUS));
-                               
-                               p_or[2] =
-                                   FOCUS
-                                   *
-                                   ((poly_i_n_vec[0]*A[0]) +
-                                    (poly_i_n_vec[1]*A[1]) +
-                                    (poly_i_n_vec[2]*A[2]))
-                                   /
-                                   ((poly_i_n_vec[0]*(j-(WIDTH/2))) +
-                                    (poly_i_n_vec[1]*(i-(HEIGHT/2))) +
-                                    (poly_i_n_vec[2]*FOCUS));
+                               p_or[0] = k * ((j-(WIDTH/2)) - camera_xyz[0]) + camera_xyz[0];
+                               p_or[1] = k * ((i-(HEIGHT/2)) - camera_xyz[1]) + camera_xyz[1];             
+                               p_or[2] = k * (FOCUS - camera_xyz[2]) + camera_xyz[2];
 
 
                                /* 点(J, i)の法線ベクトルを線形補間によって求める */
@@ -401,9 +364,9 @@ void shading(double *a, double *b, double *c,
                                
                                /* 視線方向ベクトルを求める */
                                double u[3];
-                               u[0] = p_or[0];
-                               u[1] = p_or[1];
-                               u[2] = p_or[2];
+                               u[0] = p_or[0] - camera_xyz[0];
+                               u[1] = p_or[1] - camera_xyz[1];
+                               u[2] = p_or[2] - camera_xyz[2];
                                double length_u =
                                    sqrt(pow(u[0], 2.0) +
                                         pow(u[1], 2.0) +
@@ -425,11 +388,6 @@ void shading(double *a, double *b, double *c,
                                f[0] = (f[0] / length_f);
                                f[1] = (f[1] / length_f);
                                f[2] = (f[2] / length_f);
-
-                               /* 環境マップの輝度値を取り出す */
-                               /* double m = 2*sqrt(pow(f[0], 2.0)+ */
-                               /*                   pow(f[1], 2.0)+ */
-                               /*                   pow((f[2] + 1), 2.0)); */
 
                                double m = 2*sqrt(pow(f[0], 2.0)+
                                                  pow(f[1], 2.0)+
@@ -475,11 +433,6 @@ void shading(double *a, double *b, double *c,
             }
             
             if(p[1] == q[1]){
-                //debug
-                //printf("\np[1] == q[1]\n");
-                //debug
-                /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n" */
-                /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
                 //x座標が p < q となるように調整
                 if(q[0] <  p[0]){
                     double temp[2];
@@ -490,12 +443,7 @@ void shading(double *a, double *b, double *c,
 
                     memcpy(temp_n, n_q, sizeof(double) * 3);
                     memcpy(n_q, n_p, sizeof(double) * 3);
-                    memcpy(n_p, temp_n, sizeof(double) * 3);
-                    
-                    //debug
-                    /* printf("\n交換後の3点の座標は\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n" */
-                    /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
-                    
+                    memcpy(n_p, temp_n, sizeof(double) * 3); 
                 }
                 
                 //debug
@@ -516,13 +464,6 @@ void shading(double *a, double *b, double *c,
                 /* 点(j, i)のシェーディング============================================== */
                 int i;
                 i = ceil(r[1]);
-                //debug
-                /* printf("\ni = %d\n", i); */
-                /* printf("\nr[1] = %f\n", r[1]); */
-                /* printf("\np[1] = %f\n", p[1]); */
-                //debug
-                /* printf("\n三角形\npの座標(%f, %f)\nqの座標(%f, %f)\nrの座標(%f, %f)\n\n" */
-                /*        ,p[0], p[1], q[0], q[1], r[0], r[1]); */
             
                 for(i;
                     r[1] <= i && i <= p[1];
@@ -543,39 +484,19 @@ void shading(double *a, double *b, double *c,
 
                               /* 点(j, i)の空間座標を求める. */
                                double p_or[3];                           
-                               p_or[0] =
-                                   (j-(WIDTH/2))
-                                   *
-                                   ((poly_i_n_vec[0]*A[0]) +
-                                    (poly_i_n_vec[1]*A[1]) +
-                                    (poly_i_n_vec[2]*A[2]))
+                               double k =
+                                   ((poly_i_n_vec[0] * (A[0] - camera_xyz[0])) +
+                                    (poly_i_n_vec[1] * (A[1] - camera_xyz[1])) +
+                                    (poly_i_n_vec[2] * (A[2] - camera_xyz[2])))
                                    /
-                                   ((poly_i_n_vec[0]*(j-(WIDTH/2))) +
-                                    (poly_i_n_vec[1]*(i-(HEIGHT/2))) +
-                                    (poly_i_n_vec[2]*FOCUS));
+                                   ((poly_i_n_vec[0] * ((j-(WIDTH/2)) - camera_xyz[0])) +
+                                    (poly_i_n_vec[1] * ((i-(HEIGHT/2)) - camera_xyz[1])) +
+                                    (poly_i_n_vec[2] * (FOCUS - camera_xyz[2])));
                                
-                               p_or[1] =
-                                   (i-(HEIGHT/2))
-                                   *
-                                   ((poly_i_n_vec[0]*A[0]) +
-                                    (poly_i_n_vec[1]*A[1]) +
-                                    (poly_i_n_vec[2]*A[2]))
-                                   /
-                                   ((poly_i_n_vec[0]*(j-(WIDTH/2))) +
-                                    (poly_i_n_vec[1]*(i-(HEIGHT/2))) +
-                                    (poly_i_n_vec[2]*FOCUS));
+                               p_or[0] = k * ((j-(WIDTH/2)) - camera_xyz[0]) + camera_xyz[0];
+                               p_or[1] = k * ((i-(HEIGHT/2)) - camera_xyz[1]) + camera_xyz[1];             
+                               p_or[2] = k * (FOCUS - camera_xyz[2]) + camera_xyz[2];
                                
-                               p_or[2] =
-                                   FOCUS
-                                   *
-                                   ((poly_i_n_vec[0]*A[0]) +
-                                    (poly_i_n_vec[1]*A[1]) +
-                                    (poly_i_n_vec[2]*A[2]))
-                                   /
-                                   ((poly_i_n_vec[0]*(j-(WIDTH/2))) +
-                                    (poly_i_n_vec[1]*(i-(HEIGHT/2))) +
-                                    (poly_i_n_vec[2]*FOCUS));
-
                                /* 点(J, i)の法線ベクトルを線形補間によって求める */
                                double n_ji[3];
                                n_ji[0] =
@@ -627,9 +548,9 @@ void shading(double *a, double *b, double *c,
                                    
                                /* 視線方向ベクトルを求める */
                                double u[3];
-                               u[0] = p_or[0];
-                               u[1] = p_or[1];
-                               u[2] = p_or[2];
+                               u[0] = p_or[0] - camera_xyz[0];
+                               u[1] = p_or[1] - camera_xyz[1];
+                               u[2] = p_or[2] - camera_xyz[2];
                                double length_u =
                                    sqrt(pow(u[0], 2.0) +
                                         pow(u[1], 2.0) +
@@ -652,12 +573,7 @@ void shading(double *a, double *b, double *c,
                                f[0] = (f[0] / length_f);
                                f[1] = (f[1] / length_f);
                                f[2] = (f[2] / length_f);
-                               
-                               /* 環境マップの輝度値を取り出す */
-                               /* double m = 2*sqrt(pow(f[0], 2.0)+ */
-                               /*                   pow(f[1], 2.0)+ */
-                               /*                   pow((f[2] + 1), 2.0)); */
-                               
+
                                double m = 2*sqrt(pow(f[0], 2.0)+
                                                  pow(f[1], 2.0)+
                                                  pow(f[2], 2.0));
@@ -705,47 +621,24 @@ void shading(double *a, double *b, double *c,
         //分割できる
         //分割してそれぞれ再帰的に処理
         //分割後の三角形はpp2qとpp2r
-        else{
-
-            
+        else{    
             double p2[2];
             p2[0] = func1(q, r, p[1]);
             p2[1] = p[1];
             
             double P2[3];
-            P2[0] =
-                (p2[0]-(MAX/2))
-                *
-                ((poly_i_n_vec[0]*A[0]) +
-                 (poly_i_n_vec[1]*A[1]) +
-                 (poly_i_n_vec[2]*A[2]))
+            double k =
+                ((poly_i_n_vec[0] * (A[0] - camera_xyz[0])) +
+                 (poly_i_n_vec[1] * (A[1] - camera_xyz[1])) +
+                 (poly_i_n_vec[2] * (A[2] - camera_xyz[2])))
                 /
-                ((poly_i_n_vec[0]*(p2[0]-(WIDTH/2))) +
-                 (poly_i_n_vec[1]*(p2[1]-(HEIGHT/2))) +
-                 poly_i_n_vec[2]*FOCUS);
+                ((poly_i_n_vec[0] * ((p2[0]-(WIDTH/2)) - camera_xyz[0])) +
+                 (poly_i_n_vec[1] * ((p2[1]-(HEIGHT/2)) - camera_xyz[1])) +
+                 (poly_i_n_vec[2] * (FOCUS - camera_xyz[2])));
             
-            P2[1] =
-                (p2[1]-(MAX/2))
-                *
-                ((poly_i_n_vec[0]*A[0]) +
-                 (poly_i_n_vec[1]*A[1]) +
-                 (poly_i_n_vec[2]*A[2]))
-                /
-                ((poly_i_n_vec[0]*(p2[0]-(WIDTH/2))) +
-                 (poly_i_n_vec[1]*(p2[1]-(HEIGHT/2))) +
-                 poly_i_n_vec[2]*FOCUS);
-            
-            P2[2] =
-                FOCUS
-                *
-                ((poly_i_n_vec[0]*A[0]) +
-                 (poly_i_n_vec[1]*A[1]) +
-                 (poly_i_n_vec[2]*A[2]))
-                /
-                ((poly_i_n_vec[0]*(p2[0]-(WIDTH/2))) +
-                 (poly_i_n_vec[1]*(p2[1]-(HEIGHT/2))) +
-                 poly_i_n_vec[2]*FOCUS);
-            
+            P2[0] = k * ((p2[0]-(WIDTH/2)) - camera_xyz[0]) + camera_xyz[0];
+            P2[1] = k * ((p2[1]-(HEIGHT/2)) - camera_xyz[1]) + camera_xyz[1];             
+            P2[2] = k * (FOCUS - camera_xyz[2]) + camera_xyz[2];
 
             double n_p2[3];
             for(int i = 0; i < 3; i++){
@@ -1073,7 +966,6 @@ int main (int argc, char *argv[]){
     printf("loading %s...\n",MAP_FILENAME);
 
     char buf[MAX];
-
     //実装上読み込むppmの形式を以下のように制限する
     /* P3\n */
     /* WIDTH HEIGHT\n */ //(空白で区切る)
@@ -1176,11 +1068,6 @@ int main (int argc, char *argv[]){
     int input_ppm[ppm_height][ppm_width][3];
     //LISTを通常の配列に変換==================================
     LIST *p = head;
-
-    //debug
-    //printf("input ppm is...\n");
-    //printf("head->index = %d\ttail->index = %d\n", head->index, tail->index);
-        
         
     while (p->next != NULL) {
         //通常の画像viewerはヘッダを見て256*256であれば
@@ -1192,18 +1079,13 @@ int main (int argc, char *argv[]){
         div_t d1 = div(p->index, 3);
         div_t d2 = div(d1.quot, ppm_width);
                 
-        input_ppm[d2.quot][d2.rem][d1.rem] = p->num;
-
-        /* printf("input_ppm[%d][%d][%d] = %d\n", */
-        /*        d2.quot, d2.rem, d1.rem, */
-        /*        input_ppm[d2.quot][d2.rem][d1.rem]); */
-            
+        input_ppm[d2.quot][d2.rem][d1.rem] = p->num;     
         p = p->next;
     }
     /* 環境マップppmファイルの読み込みここまで================================= */
 
     FILE *fp_ppm;
-    char *fname = FILENAME;
+    char *fname = argv[2];
 
     
     fp_ppm = fopen( fname, "w" );
@@ -1253,6 +1135,11 @@ int main (int argc, char *argv[]){
         specular_color[1] = surface.spec[1];
         specular_color[2] = surface.spec[2];
 
+        //カメラ位置の取り込み
+        camera_xyz[0] = atoi(argv[3]);
+        camera_xyz[1] = 0.0;
+        camera_xyz[2] = 0.0;
+        printf("camera is at (%f, %f, %f)\n", camera_xyz[0], camera_xyz[1], camera_xyz[2]);
 
         /* 全三角形の法線ベクトルを格納======================================================= */
         
@@ -1275,12 +1162,6 @@ int main (int argc, char *argv[]){
             C[0] = poly.vtx[(poly.idx[i*3+2])*3 + 0];
             C[1] = poly.vtx[(poly.idx[i*3+2])*3 + 1];
             C[2] = poly.vtx[(poly.idx[i*3+2])*3 + 2];
-
-            //debug
-            /* printf("\n三角形%dの3点の座標は\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\n(%f,\t%f,\t%f)\nです\n", i , */
-            /*        A[0], A[1], A[2], */
-            /*        B[0], B[1], B[2], */
-            /*        C[0], C[1], C[2]); */
             
             //ベクトルAB, ACから外積を計算して
             //法線ベクトルnを求める
@@ -1405,10 +1286,6 @@ int main (int argc, char *argv[]){
                 double yp = poly.vtx[(poly.idx[i*3+j])*3 + 1];
                 double zp = poly.vtx[(poly.idx[i*3+j])*3 + 2];
                 double zi = FOCUS;
-
-                //debug
-                //printf("\nxp = %f\typ = %f\tzp = %f\n", xp, yp, zp);
-
                 //debug 
                 if(zp == 0){
                     printf("\n(%f\t%f\t%f) i=%d, j=%d\n", xp, yp, zp, i, j);
@@ -1417,8 +1294,8 @@ int main (int argc, char *argv[]){
                     //break;
                 }
                 
-                double xp2 = xp * (zi / zp);
-                double yp2 = yp * (zi / zp);
+                double xp2 = xp * ((zi - camera_xyz[2]) / (zp - camera_xyz[2]));
+                double yp2 = yp * ((zi - camera_xyz[2]) / (zp - camera_xyz[2]));
                 double zp2 = zi;
                 
                 //座標軸を平行移動
@@ -1506,3 +1383,4 @@ int main (int argc, char *argv[]){
     printf("\nppmファイル %s の作成が完了しました.\n", fname );
     return 1;
 }
+

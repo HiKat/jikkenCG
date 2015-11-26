@@ -1,5 +1,5 @@
 #!/bin/sh
-SRC=kadai05New.c
+SRC=kadai05.c
 
 WRL=sample/av5.wrl
 

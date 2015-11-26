@@ -58,6 +58,7 @@
 %% ============================================================================================
 \section{課題4}
 本課題ではグーローシェーディングのみを実装した.
+（なお、フォーンシェーディングとカメラ位置の変更については課題5で実装した.）
 \subsection{プログラム本体}
 プログラム本体は次のようになった.
 \lstinputlisting[caption=kadai04.c,label=kadai04.c,breaklines=true]{./kadai04.c}
@@ -83,10 +84,21 @@ $ sh EvalKadai04.sh
 本課題ではまず環境マッピングをフォーンシェーディングによって
 実装した.さらに課題4では実装しなかったカメラ位置の変更機能をプログラムに加えた.
 なお、便宜上、カメラ位置についてはコマンドライン変数よりx座標のみを指定する仕様としている.
+また、環境マップのパスはプログラム内のマクロで
+\begin{verbatim}
+./sample/spheremap1.ppm
+\end{verbatim}
+と指定した.
+（当初、フォーンシェーディングではなくグーローシェーディングで実装を行っていたが、
+  それではポリゴン単位で環境マップの輝度値が一様になる傾向があることがわかったため、
+フォーンシェーディングで実装を行った.）
+\subsection{プログラム本体}
+プログラム本体は次のようになった.
+\lstinputlisting[caption=kadai05.c,label=kadai05.c,breaklines=true]{./kadai05.c}
 \section{実行例}
 kadai05.cと同一のディレクトリに次のプログラムを置き、
 \lstinputlisting[caption=EvalKadai05.sh,label=EvalKadai05.sh,breaklines=true]{./EvalKadai05.sh}
-さらに同一ディレクトリ内のディレクトリsampleの中に対象とするVRMLファイルを置いて、
+さらに同一ディレクトリ内のディレクトリsampleの中に対象とするVRMLファイル、環境マップを置いて、
 \begin{lstlisting}
 $ sh EvalKadai05.sh
 \end{lstlisting}

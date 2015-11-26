@@ -58,8 +58,6 @@ double func1(double *p, double *q, double y){
         perror(NULL);
         return -1;
     }
-    //printf("check x = %f\n", x);
-    //printf("check p[0] = %f\n", p[0]);
     return x;
 }
 
@@ -164,8 +162,6 @@ void shading(double *a, double *b, double *c, double *n, double *A){
                             
             //2パターンの三角形を特定
             if(p[1] == r[1]){
-                //debug
-                //printf("\np[1] == r[1]\n");
                 //x座標が p <= r となるように調整
                 if(r[0] <  p[0]){
                     double temp[2];
